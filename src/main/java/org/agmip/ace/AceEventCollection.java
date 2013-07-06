@@ -40,6 +40,10 @@ public class AceEventCollection extends AbstractCollection<AceEvent> {
     public Iterator<AceEvent> iterator() {
         return events.iterator();
     }
+    
+    public List<AceEvent> asList() {
+        return events;
+    }
 
     public AceEventCollection filterByEvent(AceEventType eventType) {
         List<AceEvent> filteredEvent = new ArrayList<AceEvent>();

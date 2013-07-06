@@ -2,7 +2,6 @@ package org.agmip.ace.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +12,7 @@ import org.agmip.ace.lookup.LookupPath;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
@@ -22,41 +22,50 @@ public class AceFunctions {
     private AceFunctions() {
     }
 
-    public static String generateId(IAceBaseComponent source) {
+    public static String generateId(IAceBaseComponent source) throws IOException {
         // First check if there is an Id already in place.
-        String id = source.getId();
+        String id = source.getId(false);
         if (id == null) {
             // Get the sha256 hash of the byte array
-            return generateId(source.getRawComponent()); 
+            return source.getId(true);
         } else {
             return id;
         }
     }
     
-    public static String generateId(byte[] source) {
-        return hf.newHasher().putBytes(source).hash().toString();
+    public static String generateId(byte[] source) throws IOException {
+        return generateHCId(source).toString();
+    }
+    
+    public static HashCode generateHCId(byte[] first, byte[] second) {
+        return hf.newHasher().putBytes(first).putBytes(second).hash();
+    }
+    
+    public static HashCode generateHCId(byte[] source) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        JsonParser    p = JsonFactoryImpl.INSTANCE.getParser(source);
+        JsonGenerator g = JsonFactoryImpl.INSTANCE.getGenerator(out);
+        JsonToken     t = p.nextToken();
+        
+        while (t != null) {
+            String currentName = p.getCurrentName();
+            if (currentName == null || Collections.binarySearch(LookupPath.INSTANCE.getHashFilter(), currentName) < 0) {
+                g.copyCurrentEvent(p);
+            } 
+            t = p.nextToken();
+        }
+        p.close();
+        g.flush();
+        g.close();
+        return hf.newHasher().putBytes(out.toByteArray()).hash();
     }
     
     public static boolean verifyId(IAceBaseComponent source) throws IOException {
-        String id = source.getId();
+        String id = source.getId(false);
         if (id == null) {
             return false;
         }
-        List<String> idKey = new ArrayList<String>();
-        switch(source.getComponentType()) {
-        case ACE_EXPERIMENT:
-            idKey.add("eid");
-            break;
-        case ACE_SOIL:
-            idKey.add("sid");
-            break;
-        case ACE_WEATHER:
-            idKey.add("wid");
-            break;
-        default:
-            return false;
-        }
-        return id == generateId(removeKeys(source, idKey));
+        return id == generateId(source);
     }
     
     public static byte[] removeKeys(IAceBaseComponent source, List<String> keysToRemove) throws IOException {
@@ -103,7 +112,22 @@ public class AceFunctions {
         }
     }
     
+    public static AceComponentType getBaseComponentTypeFromKey(String key) {
+        String path = LookupPath.INSTANCE.getPath(key);
+        if (path.contains("weather")) {
+            return AceComponentType.ACE_WEATHER;
+        } else if (path.contains("soil")) {
+            return AceComponentType.ACE_SOIL;
+        } else {
+            return AceComponentType.ACE_EXPERIMENT;
+        }
+    }
+    
     public static byte[] getBlankComponent() throws IOException {
         return "{}".getBytes("UTF-8");
+    }
+    
+    public static byte[] getBlankSeries() throws IOException {
+        return "[]".getBytes("UTF-8");
     }
 }

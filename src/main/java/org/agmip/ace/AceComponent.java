@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.google.common.hash.HashCode;
 
 public class AceComponent {
     private static final Logger log = LoggerFactory
@@ -21,15 +22,17 @@ public class AceComponent {
 
     public AceComponentType componentType;
 
-    public AceComponent() {
+    public AceComponent() throws IOException {
+        this.component = "{}".getBytes("UTF-8");
+        this.hasUpdate = false;
     }
 
-    public AceComponent(byte[] component) {
+    public AceComponent(byte[] component) throws IOException {
         this.component = component;
         this.hasUpdate = false;
     }
     
-    public byte[] getRawComponent() {
+    public byte[] getRawComponent() throws IOException {
         return this.component;
     }
 
@@ -77,6 +80,10 @@ public class AceComponent {
         p.close();
         return null;
     }
+    
+    public HashCode getRawComponentHash() throws IOException {
+        return AceFunctions.generateHCId(this.component);
+    }
 
     public byte[] getRawRecords(String key) throws IOException {
         JsonParser p = this.getParser();
@@ -98,13 +105,13 @@ public class AceComponent {
                     return subcomponent;
                 } else {
                     log.error("Key {} does not start an array.", key);
-                    return new byte[0];
+                    return AceFunctions.getBlankSeries();
                 }
             }
             t = p.nextToken();
         }
-        log.error("Did not find key: {}", key);
-        return new byte[0];
+//        log.debug("Did not find key: {} in {}", key, new String(this.component, "UTF-8"));
+        return AceFunctions.getBlankSeries();
     }
 
     public AceRecordCollection getRecords(String key) throws IOException {
@@ -129,13 +136,13 @@ public class AceComponent {
                     return subcomponent;
                 } else {
                     log.error("Key {} does not start an object.", key);
-                    return new byte[0];
+                    return AceFunctions.getBlankComponent();
                 }
             }
             t = p.nextToken();
         }
-        log.error("Did not find key: {}", key);
-        return new byte[0];
+//        log.debug("Did not find key: {} in {}", key, new String(this.component, "UTF-8"));
+        return AceFunctions.getBlankComponent();
     }
 
     public AceComponent getSubcomponent(String key) throws IOException {
@@ -146,20 +153,7 @@ public class AceComponent {
         return new String(this.component);
     }
 
-    public boolean checkProperty(String propertyKey) throws IOException {
-        if (!propertyKey.startsWith("*") && !propertyKey.endsWith("*")) {
-            propertyKey = "*" + propertyKey + "*";
-        }
-        String propertyValue = this.getValue(propertyKey);
-        if (propertyValue != null) {
-            if (propertyValue.toUpperCase().startsWith("T")
-                    || propertyValue.toUpperCase().startsWith("Y")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+  
     public AceComponent update(String key, String newValue,
             boolean addIfMissing, boolean removeMode) throws IOException {
         AceComponentType updateComponentType = AceFunctions
@@ -200,7 +194,10 @@ public class AceComponent {
             g.flush();
             g.close();
             this.component = out.toByteArray();
+        } else {
+            log.error("Failed to update key: {}",key);
         }
+        
         return this;
     }
 

@@ -1,5 +1,7 @@
 package org.agmip.ace;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -68,5 +70,15 @@ public class AceDatasetTest {
 
         System.out.println("Comparable test "+a.compareTo(b));
         System.out.println("Compare to blank"+a.compareTo(""));
+    }
+    
+    @Test
+    public void testUpdateSubcomponents() throws IOException {
+        AceExperiment e = setHSC.getExperiments().get(0);
+        AceEvent planting = e.getEvents().filterByEvent(AceEventType.ACE_PLANTING_EVENT).asList().get(0);
+        String originalName = planting.getValue("crid");
+        planting.update("crid", "MAZ");
+        String newName = planting.getValue("crid");
+        assertNotEquals(originalName, newName);
     }
 }
