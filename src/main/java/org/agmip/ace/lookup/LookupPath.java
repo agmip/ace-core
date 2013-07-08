@@ -30,10 +30,6 @@ public enum LookupPath {
 
     public String getPath(String lookup) {
     	if (lookup != null ) {
-            // Temporary hardwire
-            if (lookup.toLowerCase().endsWith("cul_id")) {
-                return pathfinder.get("cul_id");
-            }
     		return pathfinder.get(lookup.toLowerCase());
     	} else {
     		LOG.error("Passed a null to getPath()");
@@ -135,9 +131,12 @@ public enum LookupPath {
             } else if ( id == 2111 || id == 2112 ) {
                 // Events - chemical
                 return "management@events!chemicals";
-            } else if ( id == 2101 || id == 2102 ) {
+            } else if ( id == 2101 ) {
                 // Events - mulch
-                return "management@events!mulch";
+                return "management@events!mulch_add";
+            } else if ( id == 2102 ) { 
+                // Events - mulch
+                return "management@events!mulch_remove";
             } else if ( id >= 2502 && id <= 2510 ) {
                 // Observed summary data
                 return "observed";
