@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +17,19 @@ public enum MetadataFilter {
     INSTANCE;
 
     private final Logger LOG = LoggerFactory.getLogger("org.agmip.ace.util.MetadataFilter");
-    private final Set<String> metadata           = new CopyOnWriteArraySet<>();
-    private final Set<String> required           = new CopyOnWriteArraySet<>();
-    private final Set<String> indexed            = new CopyOnWriteArraySet<>();
-    private final Set<String> restricted         = new CopyOnWriteArraySet<>();
-    private final Set<String> suggested          = new CopyOnWriteArraySet<>();
-    private final Set<String> export             = new CopyOnWriteArraySet<>();
-    private final Set<String> restrictedexport   = new CopyOnWriteArraySet<>();
-    private final Set<String> norestrictedexport = new CopyOnWriteArraySet<>();
+    private final Set<String> metadata           = new ConcurrentSkipListSet<>();
+    private final Set<String> required           = new ConcurrentSkipListSet<>();
+    private final Set<String> indexed            = new ConcurrentSkipListSet<>();
+    private final Set<String> restricted         = new ConcurrentSkipListSet<>();
+    private final Set<String> suggested          = new ConcurrentSkipListSet<>();
+    private final Set<String> export             = new ConcurrentSkipListSet<>();
+    private final Set<String> restrictedexport   = new ConcurrentSkipListSet<>();
+    private final Set<String> norestrictedexport = new ConcurrentSkipListSet<>();
     private final Map<String, Integer> weights   = new ConcurrentHashMap<>();
 
-    MetadataFilter() {
+    MetadataFilter() {}
+    
+    public void initialize() {
         InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
         loadFromEmbeddedCSV(filter);
     }
