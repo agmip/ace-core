@@ -29,30 +29,40 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
         this.extractSubcomponents();
         this.wid = this.getValue("wid");
         if(this.wid == null) {
-            this.update("wid", this.getId(true), true);
+            this.getId(true);
         }
         this.componentType = AceComponentType.ACE_WEATHER;
     }
 
     public String getId(boolean forceRegenerate) throws IOException {
         if (forceRegenerate || this.wid == null) {
-            HashCode currentHash = this.getRawComponentHash();
-            for (AceRecord r: this.getDailyWeather()) {
-                currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes()); 
-            }
-            this.wid = currentHash.toString();
+            this.wid = this.generateId();
+            this.update("wid", this.wid, true);
         }
         return this.wid;
     }
-    
+
     public String getId() throws IOException {
         return this.getId(false);
     }
-    
+
+    public String generateId() throws IOException {
+        HashCode currentHash = this.getRawComponentHash();
+        for (AceRecord r: this.getDailyWeather()) {
+            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
+        }
+        return currentHash.toString();
+    }
+
+    public boolean validId() throws IOException {
+        if (this.wid == null) return false;
+        return this.wid.equals(this.generateId());
+    }
+
     public AceComponentType getComponentType() {
         return this.componentType;
     }
-    
+
     private void extractSubcomponents() throws IOException {
         ByteArrayOutputStream baseOut = new ByteArrayOutputStream();
         JsonParser p = this.getParser();
@@ -78,7 +88,7 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
         this.component = baseOut.toByteArray();
         baseOut = null;
     }
-    
+
     public AceRecordCollection getDailyWeather() throws IOException {
         if (this.dailyWeather == null) {
             this.dailyWeather = this.getRecords("dailyWeather");
@@ -124,5 +134,32 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
             }
         }
         return this.missingDates;
+    }
+
+    public byte[] rebuildComponent() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        JsonParser p = this.getParser();
+        JsonGenerator g = this.getGenerator(bos);
+        JsonToken t = p.nextToken();
+        while ( t != null) {
+            if (t == JsonToken.END_OBJECT) {
+                g.writeArrayFieldStart("dailyWeather");
+                for(AceRecord r: this.getDailyWeather()) {
+                    g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
+                }
+                g.writeEndArray();
+            }
+            g.copyCurrentEvent(p);
+            t = p.nextToken();
+        }
+        p.close();
+        g.flush();
+        g.close();
+        bos.close();
+        if (bos.size() == 0) {
+            return AceFunctions.getBlankComponent();
+        } else {
+            return bos.toByteArray();
+        }
     }
 }

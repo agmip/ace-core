@@ -24,37 +24,49 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         this.eid = this.getValue("eid");
         this.componentType = AceComponentType.ACE_EXPERIMENT;
         if(this.eid == null) {
-            this.update("eid", this.getId(true), true);
+            this.getId(true);
         }
     }
 
     public String getId(boolean forceRegenerate) throws IOException {
         if (forceRegenerate || this.eid == null) {
-            HashCode currentHash = this.getRawComponentHash();
-            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), this.ic.getRawComponentHash().asBytes());
-            for(AceRecord r: this.ic.getSoilLayers()) {
-                currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
-            }
-            for(AceEvent e: this.events.asList()) {
-                currentHash = AceFunctions.generateHCId(currentHash.asBytes(), e.getRawComponentHash().asBytes());
-            }
-            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), this.observed.getRawComponentHash().asBytes());
-            for(AceRecord r: this.observed.getTimeseries()) {
-                currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
-            }
-            this.eid = currentHash.toString();
+            this.eid = this.generateId();
+            this.update("eid", this.eid, true);
         }
         return this.eid;
     }
-    
+
+    public boolean validId() throws IOException {
+        if (this.eid == null) return false;
+        return this.eid.equals(this.generateId());
+    }
+
+    // Should this be in the public scope? Why shouldn't a developer be
+    // able to trigger this method?
+    public String generateId() throws IOException {
+        HashCode currentHash = this.getRawComponentHash();
+        currentHash = AceFunctions.generateHCId(currentHash.asBytes(), this.ic.getRawComponentHash().asBytes());
+        for(AceRecord r: this.ic.getSoilLayers()) {
+            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
+        }
+        for(AceEvent e: this.events.asList()) {
+            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), e.getRawComponentHash().asBytes());
+        }
+        currentHash = AceFunctions.generateHCId(currentHash.asBytes(), this.observed.getRawComponentHash().asBytes());
+        for(AceRecord r: this.observed.getTimeseries()) {
+            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
+        }
+        return currentHash.toString();
+    }
+
     public String getId() throws IOException {
         return getId(false);
     }
-    
+
     public AceComponentType getComponentType() {
         return this.componentType;
     }
-    
+
     public AceWeather getWeather() {
         return this.weather;
     }
@@ -90,9 +102,12 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         JsonToken t;
 
         t = p.nextToken();
-
+        boolean inManagement = false;
         while (t != null) {
             String currentName = p.getCurrentName();
+            if (currentName != null && t == JsonToken.FIELD_NAME && currentName.equals("management")) {
+                inManagement = true;
+            }
             if(currentName != null && t == JsonToken.FIELD_NAME &&
                     (currentName.equals("initial_conditions") ||
                      currentName.equals("observed") ||
@@ -112,7 +127,12 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
                     this.events = new AceEventCollection(out);
                 }
             } else {
-                g.copyCurrentEvent(p);
+                if (!inManagement) {
+                    g.copyCurrentEvent(p);
+                }
+            }
+            if(inManagement && t == JsonToken.END_OBJECT) {
+                inManagement = false;
             }
             t = p.nextToken();
         }
@@ -130,4 +150,69 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         g.close();
         this.component = baseOut.toByteArray();
     }
+
+    public byte[] rebuildComponent() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        JsonParser p = this.getParser();
+        JsonGenerator g = this.getGenerator(bos);
+        JsonToken t = p.nextToken();
+        while ( t != null) {
+            if (t == JsonToken.END_OBJECT) {
+                // Write the initial conditions
+                g.writeFieldName("initial_conditions");
+                JsonParser subP = this.getInitialConditions().getParser();
+                JsonToken  subT = subP.nextToken();
+                while (subT != null) {
+                    if (subT == JsonToken.END_OBJECT) {
+                        g.writeArrayFieldStart("soilLayer");
+                        for (AceRecord r : this.getInitialConditions().getSoilLayers()) {
+                            g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
+                        }
+                        g.writeEndArray();
+                    }
+                    g.copyCurrentEvent(subP);
+                    subT = subP.nextToken();
+                }
+                subP.close();
+                g.writeObjectFieldStart("management");
+                g.writeArrayFieldStart("events");
+                // Write the events
+                for (AceEvent e: this.getEvents().asList()) {
+                    g.writeRawValue(new String(e.getRawComponent(), "UTF-8"));
+                }
+                g.writeEndArray();
+                g.writeEndObject();
+                // Write the observed
+                g.writeFieldName("observed");
+                subP = this.getOberservedData().getParser();
+                subT = subP.nextToken();
+
+                while (subT != null) {
+                    if (subT == JsonToken.END_OBJECT) {
+                        g.writeArrayFieldStart("timeSeries");
+                        for (AceRecord r: this.getOberservedData().getTimeseries()) {
+                            g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
+                        }
+                        g.writeEndArray();
+                    }
+                    g.copyCurrentEvent(subP);
+                    subT = subP.nextToken();
+                }
+                subP.close();
+            }
+            g.copyCurrentEvent(p);
+            t = p.nextToken();
+        }
+        p.close();
+        g.flush();
+        g.close();
+        bos.close();
+        if (bos.size() == 0) {
+            return AceFunctions.getBlankComponent();
+        } else {
+            return bos.toByteArray();
+        }
+    }
+
 }
+
