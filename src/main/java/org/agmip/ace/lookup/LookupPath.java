@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ public enum LookupPath {
 
     private final HashMap<String, String> pathfinder = new HashMap<String, String>();
     private final ArrayList<String> datefinder = new ArrayList<String>();
+    private final ArrayList<String> hashfilter = new ArrayList<>();
     private final Logger LOG = LoggerFactory.getLogger("org.agmip.util.AcePathfinder");
 
     LookupPath() {
@@ -28,10 +30,6 @@ public enum LookupPath {
 
     public String getPath(String lookup) {
     	if (lookup != null ) {
-            // Temporary hardwire
-            if (lookup.toLowerCase().endsWith("cul_id")) {
-                return pathfinder.get("cul_id");
-            }
     		return pathfinder.get(lookup.toLowerCase());
     	} else {
     		LOG.error("Passed a null to getPath()");
@@ -68,9 +66,14 @@ public enum LookupPath {
                         if (line[8].toLowerCase().equals("date")) {
                             datefinder.add(line[2].toLowerCase());
                         }
+                        // This is the exclusion filter for the hashmap
+                        if (line[16].toLowerCase().equals("0")) {
+                            hashfilter.add(line[2].toLowerCase());
+                        }
                     }
                 }
                 reader.close();
+                Collections.sort(hashfilter);
             } else {
                 LOG.error("Missing embedded CSV file for configuration. AcePathfinder will be blank");
             }
@@ -128,9 +131,12 @@ public enum LookupPath {
             } else if ( id == 2111 || id == 2112 ) {
                 // Events - chemical
                 return "management@events!chemicals";
-            } else if ( id == 2101 || id == 2102 ) {
+            } else if ( id == 2101 ) {
                 // Events - mulch
-                return "management@events!mulch";
+                return "management@events!mulch_add";
+            } else if ( id == 2102 ) { 
+                // Events - mulch
+                return "management@events!mulch_remove";
             } else if ( id >= 2502 && id <= 2510 ) {
                 // Observed summary data
                 return "observed";
@@ -153,5 +159,9 @@ public enum LookupPath {
 
     public ArrayList<String> peekAtDatefinder() {
         return datefinder;
+    }
+    
+    public ArrayList<String> getHashFilter() {
+        return hashfilter;
     }
 }

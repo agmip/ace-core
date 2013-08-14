@@ -42,6 +42,8 @@ public class AceRecordCollection extends AbstractCollection<AceRecord> {
         int i = 0;
         if (t != JsonToken.START_ARRAY) {
             log.error("Not starting with START_ARRAY, is {}", (t == null ? "NULL" : t.asString()));
+            //DEBUG
+            log.debug("Value is: {}",new String(collection, "UTF-8"));
             return i;
         }
         while(t != null) {

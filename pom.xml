@@ -8,6 +8,41 @@
 	<version>2.0-SNAPSHOT</version>
 	<name>AgMIP Crop Experiment Library - Core Components</name>
 	<url>http://www.agmip.org/</url>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+  <issueManagement>
+    <url>https://github.com/agmip/ace-core/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>BSD License</name>
+      <url>https://raw.github.com/agmip/ace-core/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/agmip/ace-core</url>
+    <connection>scm:git:git://github.com/agmip/ace-core.git</connection>
+    <developerConnection>scm:git:git@github.com:agmip/ace-core.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <email>cvillalobos@ufl.edu</email>
+      <name>Christopher Villalobos</name>
+      <url>https://github.com/frostbytten</url>
+      <id>frostbytten</id>
+    </developer>
+  </developers>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.7</maven.compiler.source>
@@ -145,8 +180,55 @@
 							<skipCache>true</skipCache>
 						</configuration>
 					</execution>
+          <execution>
+						<id>download-metadata-filter</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://dev.agmip.org/mvl/metadata_filter.csv</url>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
+							<skipCache>true</skipCache>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.googlecode.maven-download-plugin
+										</groupId>
+										<artifactId>
+											maven-download-plugin
+										</artifactId>
+										<versionRange>
+											[1.1.0,)
+										</versionRange>
+										<goals>
+											<goal>wget</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
