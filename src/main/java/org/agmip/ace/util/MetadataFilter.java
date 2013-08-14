@@ -17,18 +17,20 @@ public enum MetadataFilter {
     INSTANCE;
 
     private final Logger LOG = LoggerFactory.getLogger("org.agmip.ace.util.MetadataFilter");
-    private final Set<String> metadata           = new ConcurrentSkipListSet<>();
-    private final Set<String> required           = new ConcurrentSkipListSet<>();
-    private final Set<String> indexed            = new ConcurrentSkipListSet<>();
-    private final Set<String> restricted         = new ConcurrentSkipListSet<>();
-    private final Set<String> suggested          = new ConcurrentSkipListSet<>();
-    private final Set<String> export             = new ConcurrentSkipListSet<>();
-    private final Set<String> restrictedexport   = new ConcurrentSkipListSet<>();
-    private final Set<String> norestrictedexport = new ConcurrentSkipListSet<>();
-    private final Map<String, Integer> weights   = new ConcurrentHashMap<>();
+    private final Set<String> metadata              = new ConcurrentSkipListSet<>();
+    private final Set<String> required              = new ConcurrentSkipListSet<>();
+    private final Set<String> indexed               = new ConcurrentSkipListSet<>();
+    private final Set<String> restricted            = new ConcurrentSkipListSet<>();
+    private final Set<String> suggested             = new ConcurrentSkipListSet<>();
+    private final Set<String> export                = new ConcurrentSkipListSet<>();
+    private final Set<String> restrictedexport      = new ConcurrentSkipListSet<>();
+    private final Set<String> norestrictedexport    = new ConcurrentSkipListSet<>();
+    private final Map<String, String>  descriptions = new ConcurrentHashMap<>();
+    private final Map<String, Integer> weights      = new ConcurrentHashMap<>();
+    private final Map<String, String>  labels       = new ConcurrentHashMap<>();
 
     MetadataFilter() {}
-    
+
     public void initialize() {
         InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
         loadFromEmbeddedCSV(filter);
@@ -45,29 +47,46 @@ public enum MetadataFilter {
     public Set<String> getIndexedMetadata() {
         return indexed;
     }
-    
+
     public Map<String, Integer> getWeights() {
         return weights;
     }
-    
+
     public Set<String> getRestrictedMetadata() {
         return restricted;
     }
-    
+
     public Set<String> getSuggestedMetadata() {
         return suggested;
     }
-    
+
     public Set<String> getExportMetadata() {
         return export;
     }
-    
+
     public Set<String> getRestrictedExportMetadata() {
         return restrictedexport;
     }
-    
+
     public Set<String> getRestrictedNoExportMetadata() {
         return norestrictedexport;
+    }
+
+    public Map<String, String> getDescriptions() {
+        return descriptions;
+    }
+    
+    public Map<String, String> getLabels() {
+        return labels;
+    }
+    
+    public String getLabelFor(String var) {
+        String label = labels.get(var);
+        if (label == null) {
+            return "";
+        } else {
+            return label;
+        }
     }
 
     public void addMetadata(String item) {
@@ -85,23 +104,27 @@ public enum MetadataFilter {
     public void addRestrictedMetadata(String item) {
         restricted.add(item);
     }
-    
+
     public void addSuggestedMetadata(String item) {
         suggested.add(item);
     }
-    
+
     public void addWeight(String item, int value) {
         weights.put(item, value);
     }
     
+    public void addLabel(String item, String value) {
+        labels.put(item, value);
+    }
+
     public void addExportMetadata(String item) {
         export.add(item);
     }
-    
+
     public void addRestrictedExportMetadata(String item) {
         restrictedexport.add(item);
     }
-    
+
     public void addRestrictedNoExportMetadata(String item) {
         norestrictedexport.add(item);
     }
@@ -119,7 +142,7 @@ public enum MetadataFilter {
     public void removeRequiredMetadata(String item) {
         required.remove(item);
     }
-    
+
     private void loadFromEmbeddedCSV(InputStream res) {
         try {
             if( res != null ) {
@@ -129,7 +152,7 @@ public enum MetadataFilter {
                 while(( nextLine = reader.readNext()) != null) {
                     String var = nextLine[0].toLowerCase();
                     if (! var.startsWith("!")) {
-                        // Comments start with !    
+                        // Comments start with !
                         if(! nextLine[1].equals("")) {
                             addIndexedMetadata(var);
                         }
@@ -161,6 +184,10 @@ public enum MetadataFilter {
                             }
                         }
                         addMetadata(var);
+                        descriptions.put(var, nextLine[5]);
+                        if(! nextLine[7].equals("")) {
+                            addLabel(var, nextLine[7]);
+                        }
                     }
                 }
                 reader.close();
