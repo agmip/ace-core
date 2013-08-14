@@ -18,8 +18,8 @@ public class AceDatasetTest {
 
     @Before
     public void setup() throws IOException {
-        InputStream sourceMach = new GZIPInputStream(this.getClass().getResourceAsStream("/test.aceb"));
-        InputStream sourceHSC = new GZIPInputStream(this.getClass().getResourceAsStream("/hsc.aceb"));
+        InputStream sourceMach = new GZIPInputStream(this.getClass().getResourceAsStream("/mach_baseline.json.gz"));
+        InputStream sourceHSC = new GZIPInputStream(this.getClass().getResourceAsStream("/hsc.json.gz"));
         setMach = AceParser.parse(sourceMach);
         setHSC  = AceParser.parse(sourceHSC);
         sourceMach.close();
@@ -80,5 +80,12 @@ public class AceDatasetTest {
         planting.update("crid", "MAZ");
         String newName = planting.getValue("crid");
         assertNotEquals(originalName, newName);
+    }
+
+    @Test
+    public void testAssociations() throws IOException {
+        AceExperiment e = setHSC.getExperiments().get(0);
+        System.out.println("Linked weather ID: "+e.getValue("wid"));
+        System.out.println("Linked soil    ID: "+e.getValue("sid"));
     }
 }

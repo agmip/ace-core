@@ -21,29 +21,39 @@ public class AceSoil extends AceComponent implements IAceBaseComponent {
         this.componentType = AceComponentType.ACE_SOIL;
         this.sid = this.getValue("sid");
         if(this.sid == null) {
-            this.update("sid", AceFunctions.generateId(source), true);
+            this.getId(true);
         }
     }
 
     public String getId(boolean forceRegenerate) throws IOException {
         if (forceRegenerate || this.sid == null) {
-            HashCode currentHash = this.getRawComponentHash();
-            for (AceRecord r: this.getSoilLayers()) {
-                currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
-            }
-            this.sid = currentHash.toString();
+            this.sid = this.generateId();
+            this.update("sid", this.sid, true);
         }
         return this.sid;
     }
-    
+
     public String getId() throws IOException {
         return this.getId(false);
     }
-    
+
+    public String generateId() throws IOException {
+        HashCode currentHash = this.getRawComponentHash();
+        for (AceRecord r: this.getSoilLayers()) {
+            currentHash = AceFunctions.generateHCId(currentHash.asBytes(), r.getRawComponentHash().asBytes());
+        }
+        return currentHash.toString();
+    }
+
+    public boolean validId() throws IOException {
+        if (this.sid == null) return false;
+        return this.sid.equals(this.generateId());
+    }
+
     public AceComponentType getComponentType() {
         return this.componentType;
     }
-    
+
     private void extractSubcomponents() throws IOException {
         ByteArrayOutputStream baseOut = new ByteArrayOutputStream();
         JsonParser p = this.getParser();
@@ -69,12 +79,39 @@ public class AceSoil extends AceComponent implements IAceBaseComponent {
         this.component = baseOut.toByteArray();
         baseOut = null;
     }
-    
-   
+
+
     public AceRecordCollection getSoilLayers() throws IOException {
         if (this.soilLayers == null) {
             this.soilLayers = this.getRecords("soilLayer");
         }
         return this.soilLayers;
+    }
+
+    public byte[] rebuildComponent() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        JsonParser p = this.getParser();
+        JsonGenerator g = this.getGenerator(bos);
+        JsonToken t = p.nextToken();
+        while ( t != null) {
+            if (t == JsonToken.END_OBJECT) {
+                g.writeArrayFieldStart("soilLayer");
+                for(AceRecord r: this.getSoilLayers()) {
+                    g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
+                }
+                g.writeEndArray();
+            }
+            g.copyCurrentEvent(p);
+            t = p.nextToken();
+        }
+        p.close();
+        g.flush();
+        g.close();
+        bos.close();
+        if (bos.size() == 0) {
+            return AceFunctions.getBlankComponent();
+        } else {
+            return bos.toByteArray();
+        }
     }
 }
