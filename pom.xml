@@ -231,4 +231,8 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<organization>
+		<name>AgMIP</name>
+		<url>http://www.agmip.org/</url>
+	</organization>
 </project>

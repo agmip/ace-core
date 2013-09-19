@@ -29,12 +29,15 @@ public enum MetadataFilter {
     private final Map<String, Integer> weights      = new ConcurrentHashMap<>();
     private final Map<String, String>  labels       = new ConcurrentHashMap<>();
 
-    MetadataFilter() {}
-
-    public void initialize() {
-        InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
+    MetadataFilter() {
+    	InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
         loadFromEmbeddedCSV(filter);
     }
+
+    /**public void initialize() {
+        InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
+        loadFromEmbeddedCSV(filter);
+    }**/
 
     public Set<String> getMetadata() {
         return metadata;
@@ -192,7 +195,7 @@ public enum MetadataFilter {
                 }
                 reader.close();
             } else {
-                LOG.error("Missing embedded CSV file for configuration. AcePathfinder will be blank");
+                LOG.error("Missing embedded CSV file for configuration. MetadataFilter will be blank");
             }
         } catch(IOException ex) {
             throw new RuntimeException(ex);
