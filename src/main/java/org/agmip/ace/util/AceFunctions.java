@@ -92,6 +92,9 @@ public class AceFunctions {
 
     public static AceComponentType getComponentTypeFromKey(String key) {
         String path = LookupPath.INSTANCE.getPath(key);
+        if (path == null) {
+        	return AceComponentType.ACE_EXPERIMENT;
+        }
         if (path.contains("@")) {
             if (path.contains("events")) {
                 return AceComponentType.ACE_EVENT;
@@ -111,6 +114,9 @@ public class AceFunctions {
 
     public static AceComponentType getBaseComponentTypeFromKey(String key) {
         String path = LookupPath.INSTANCE.getPath(key);
+        if (path == null) {
+        	return AceComponentType.ACE_EXPERIMENT;
+        }
         if (path.contains("weather")) {
             return AceComponentType.ACE_WEATHER;
         } else if (path.contains("soil")) {
