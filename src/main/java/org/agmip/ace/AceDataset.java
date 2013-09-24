@@ -3,6 +3,7 @@ package org.agmip.ace;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class AceDataset {
     public AceDataset() {
         this.weatherMap = new HashMap<>();
         this.soilMap    = new HashMap<>();
-        this.experimentMap = new HashMap<>();
+        this.experimentMap = new LinkedHashMap<>();
         this.widMap = new HashMap<>();
         this.sidMap = new HashMap<>();
     }
