@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.hash.HashCode;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -151,6 +153,29 @@ public class AceComponent {
 		p.close();
 		return null;
 	}
+	
+	  /**
+     * Return a set of all key names in the component
+     * 
+     * @return the set of key names
+     * @throws IOException 
+     */
+    public Set<String> keySet() throws IOException {
+        Set<String> ret = new HashSet<>();
+        JsonParser p = this.getParser();
+        JsonToken t;
+
+        t = p.nextToken();
+
+        while (t != null) {
+            if (t == JsonToken.FIELD_NAME) {
+                ret.add(p.getCurrentName());
+            }
+            t = p.nextToken();
+        }
+        p.close();
+        return ret;
+    }
 
 	/**
 	 * Return the {@code HashCode} for this component.

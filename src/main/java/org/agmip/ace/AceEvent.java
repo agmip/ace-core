@@ -43,6 +43,8 @@ public class AceEvent extends AceComponent implements Comparable<AceEvent> {
             this.eventType = AceEventType.ACE_MULCH_ADD_EVENT;
         } else if (event.equals("mulch_remove")) {
             this.eventType = AceEventType.ACE_MULCH_REMOVE_EVENT;
+        } else if (event.equals("chemical")) {
+            this.eventType = AceEventType.ACE_CHEMICAL_EVENT;
         } else {
             this.eventType = AceEventType.ACE_INVALID_EVENT;
         }
