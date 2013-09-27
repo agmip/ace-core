@@ -83,8 +83,8 @@
 		</dependency>
 		<dependency>
 			<groupId>ch.hsr</groupId>
-			<artifactId>ch.hsr.geohash</artifactId>
-			<version>1.0.6</version>
+			<artifactId>geohash</artifactId>
+			<version>1.0.9</version>
 		</dependency>
 	</dependencies>
 	<build>
