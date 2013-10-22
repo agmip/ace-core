@@ -5,6 +5,10 @@ import java.io.IOException;
 public class AceEvent extends AceComponent implements Comparable<AceEvent> {
     private AceEventType eventType;
     private String eventDate;
+    
+    public AceEvent (String event, String date) throws IOException {
+        this(String.format("{\"event\"=\"%1$s\",\"date\"=\"%2$s\"}", event, date).getBytes("UTF-8"));
+    }
 
     public AceEvent(byte[] source) throws IOException {
         super(source);
@@ -17,10 +21,12 @@ public class AceEvent extends AceComponent implements Comparable<AceEvent> {
         return this.eventType;
     }
 
+    @Override
     public int compareTo(AceEvent otherEvent) {
         return this.eventDate.compareTo(otherEvent.eventDate);
     }
 
+    @Override
     public String toString() {
         return this.eventDate+": "+this.eventType.toString();
     }

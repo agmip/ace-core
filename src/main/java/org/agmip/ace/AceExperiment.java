@@ -18,6 +18,10 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
     private AceObservedData observed;
     private AceEventCollection events;
 
+    public AceExperiment() throws IOException {
+        this(AceFunctions.getBlankComponent());
+    }
+
     public AceExperiment(byte[] source) throws IOException {
         super(source);
         this.extractSubcomponents();
