@@ -57,12 +57,12 @@ public enum LookupCodesSingleton {
                         columnIndex.add("cn");
                     } else if (currentCol.startsWith("latin")) {
                         columnIndex.add("ln");
-                    } else if (currentCol.endsWith("_code")) {
+                    } else if (currentCol.endsWith("_code") || currentCol.endsWith(" code")) {
                         if (currentCol.equals("crop_code")) {
                             columnIndex.add("code");
                         } else {
                             columnIndex.add("model");
-                            String[] tmp = currentCol.split("[_]");
+                            String[] tmp = currentCol.split("[_ ]");
                             modelIndex.add(tmp[0]);
                         }
                     } else {
