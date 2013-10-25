@@ -17,9 +17,10 @@ public enum LookupPath {
     INSTANCE;
 
     private final HashMap<String, String> pathfinder = new HashMap<String, String>();
+    private final HashMap<String, String> pathfinderAlias = new HashMap<String, String>();
     private final ArrayList<String> datefinder = new ArrayList<String>();
     private final ArrayList<String> hashfilter = new ArrayList<>();
-    private final Logger LOG = LoggerFactory.getLogger("org.agmip.util.AcePathfinder");
+    private final Logger LOG = LoggerFactory.getLogger(LookupPath.class);
 
     LookupPath() {
         InputStream master = getClass().getClassLoader().getResourceAsStream("pathfinder.csv");
@@ -30,6 +31,19 @@ public enum LookupPath {
 
     public String getPath(String lookup) {
     	if (lookup != null ) {
+            if (lookup.contains("__")) {
+                String[] tmp = lookup.split("__");
+                if (tmp.length > 1 && !tmp[1].trim().equals("")) {
+                    return setSuffixMatch(tmp[1].trim());
+                } else {
+                    lookup = tmp[0];
+                }
+            }
+            if (lookup.toLowerCase().endsWith("cul_id")) {
+                return pathfinder.get("cul_id");
+            } else if (isAlias(lookup.toLowerCase())) {
+                return pathfinder.get(getAlias(lookup.toLowerCase()));
+            }
     		return pathfinder.get(lookup.toLowerCase());
     	} else {
     		LOG.error("Passed a null to getPath()");
@@ -43,6 +57,18 @@ public enum LookupPath {
 
     public boolean isDate(String lookup) {
         return datefinder.contains(lookup);
+    }
+	
+    public boolean isAlias(String lookup) {
+        return pathfinderAlias.containsKey(lookup);
+    }
+	
+    public String getAlias(String lookup) {
+        if (isAlias(lookup)) {
+            return pathfinderAlias.get(lookup);
+        } else {
+            return lookup;
+        }
     }
 
     private void loadFromEmbeddedCSV(InputStream res) {
@@ -59,9 +85,18 @@ public enum LookupPath {
                         } else if (line[2].toLowerCase().equals("soil_id")) {
                             if( path != null ) path = ",soil";
                         }
-                        if( pathfinder.containsKey(line[4].toLowerCase()) ) LOG.error("Conflict with variable: "+line[0]+" Original Value: "+getPath(line[0])+" New Value: "+path);
+                        if( pathfinder.containsKey(line[4].toLowerCase()) ) LOG.debug("Conflict with variable: "+line[0]+" Original Value: "+getPath(line[0])+" New Value: "+path);
                         if( path != null ) {
                             setPath(line[2], path);
+                            String codeSynon = line[21].trim();
+                            if (!codeSynon.equals("")) {
+                                String[] keys = codeSynon.split("[\\s,]");
+                                for (String key : keys) {
+                                    if (!key.trim().equals("")) {
+                                        pathfinderAlias.put(key.trim().toLowerCase(), line[2].toLowerCase());
+                                    }
+                                }
+                            }
                         } 
                         if (line[8].toLowerCase().equals("date")) {
                             datefinder.add(line[2].toLowerCase());
@@ -82,6 +117,24 @@ public enum LookupPath {
             throw new RuntimeException(ex);
         }
     }
+	
+    private String setSuffixMatch(String suffix) {
+        if (suffix == null) {
+            return "";
+        }
+        suffix = suffix.toLowerCase().trim();
+        if (suffix.equals("soil")) {
+            return setGroupMatch("4051");
+        } else if (suffix.equals("soillayer")) {
+            return setGroupMatch("4052");
+        } else if (suffix.equals("weather")) {
+            return setGroupMatch("5041");
+        } else if (suffix.equals("weatherdaily")) {
+            return setGroupMatch("5052");
+        } else {
+            return "";
+        }
+    }
 
     private String setGroupMatch(String groupOrder) {
         try {
@@ -89,7 +142,7 @@ public enum LookupPath {
             if( ( id >= 1011 && id <= 1081 ) || id == 2011 || id == 2031 || id == 2121 || id == 2071 || id == 2081 || id == 2091 || id == 2211 ) {
                 // Global bucket
                 return "";
-            } else if ( ( id >= 5001 && id <= 5013 ) || id == 5041 ) {
+            } else if ( ( id >= 5001 && id <= 5013 ) || id == 5041 || id == 5046 ) {
                 // Weather Global bucket
                 return "weather";
             } else if ( id == 5052 ) {
