@@ -19,6 +19,7 @@ public class AceDataset {
     private Map<String, AceExperiment> experimentMap;
     private Map<String, String> widMap;
     private Map<String, String> sidMap;
+    private Map<String, String> eidMap;
 
     private byte majorVersion = 0;
     private byte minorVersion = 0;
@@ -33,6 +34,7 @@ public class AceDataset {
         this.experimentMap = new LinkedHashMap<>();
         this.widMap = new HashMap<>();
         this.sidMap = new HashMap<>();
+        this.eidMap = new HashMap<>();
     }
 
     public void setMajorVersion(byte major) {
@@ -103,7 +105,9 @@ public class AceDataset {
      */
     public void addExperiment(byte[] source) throws IOException {
         AceExperiment experiment = new AceExperiment(source);
-        this.experimentMap.put(experiment.getId(), experiment);
+        String eid = experiment.getId();
+        this.experimentMap.put(eid, experiment);
+        this.eidMap.put(experiment.getValueOr("exname", ""), eid);
     }
 
     /**
@@ -200,6 +204,20 @@ public class AceDataset {
         return this.experimentMap;
     }
     
+    /**
+     * Return a Experiment by given experiment name.
+     *
+     * @param exname the experiment name
+     *
+     * @return {@link AceExperiment}
+     */
+    public AceExperiment getExperiment(String exname) {
+        if (this.eidMap.containsKey(exname)) {
+            return this.experimentMap.get(eidMap.get(exname));
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Link all Experiments to the assocaited Soil Profile and Weather Station.
