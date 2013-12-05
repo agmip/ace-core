@@ -10,7 +10,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.hash.HashCode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AceExperiment extends AceComponent implements IAceBaseComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(AceExperiment.class);
     private String eid;
     private AceWeather weather;
     private AceSoil    soil;
@@ -42,6 +46,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
 
     public boolean validId() throws IOException {
         if (this.eid == null) return false;
+        String newId = this.generateId();
         return this.eid.equals(this.generateId());
     }
 
@@ -153,6 +158,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         g.flush();
         g.close();
         this.component = baseOut.toByteArray();
+        this.getId(true);
     }
 
     public byte[] rebuildComponent() throws IOException {

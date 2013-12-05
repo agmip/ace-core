@@ -1,6 +1,8 @@
 package org.agmip.ace;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -11,7 +13,11 @@ import org.agmip.ace.io.AceParser;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AceContainerTest {
+    private static final Logger LOG = LoggerFactory.getLogger(AceContainerTest.class);
     private AceWeather w;
     private AceSoil    s;
     private AceExperiment e;
@@ -29,8 +35,9 @@ public class AceContainerTest {
     @Test
     public void testWeatherValidation() throws IOException {
         String originalId = w.getId();
-        assertTrue("IDs should match", originalId.equals(w.generateId()));
+        assertNotNull("NULL WeatherID found", originalId);
         assertTrue("Failed validId()", w.validId());
+        assertEquals("IDs should match", originalId, w.generateId());
     }
 
     @Test
@@ -44,8 +51,9 @@ public class AceContainerTest {
     @Test
     public void testSoilValidation() throws IOException {
         String originalId = s.getId();
-        assertTrue("IDs should match", originalId.equals(s.generateId()));
         assertTrue("Failed validId()", s.validId());
+        assertEquals("IDs should match", originalId, s.generateId());
+
     }
 
     @Test
@@ -59,8 +67,9 @@ public class AceContainerTest {
     @Test
     public void testExperimentValidation() throws IOException {
         String originalId = e.getId();
-        assertTrue("IDs should match", originalId.equals(e.generateId()));
+        LOG.debug("Original ID from tEV: {}", originalId);
         assertTrue("Failed validId()", e.validId());
+        assertEquals("IDs should match", originalId, e.generateId());
     }
 
     @Test
