@@ -90,6 +90,7 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
         g.flush();
         g.close();
         this.component = baseOut.toByteArray();
+        this.getId(true);
         baseOut = null;
     }
 

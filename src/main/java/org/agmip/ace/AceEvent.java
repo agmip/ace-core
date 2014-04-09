@@ -28,7 +28,8 @@ public class AceEvent extends AceComponent implements Comparable<AceEvent> {
 
     @Override
     public String toString() {
-        return this.eventDate+": "+this.eventType.toString();
+        return new String(this.component);
+        //return this.eventDate+": "+this.eventType.toString();
     }
 
     private void setEventType() throws IOException {

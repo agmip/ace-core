@@ -14,7 +14,7 @@ public class LookupPathTest {
     
     @Test
     public void verifyHashFilter() {
-        assertTrue(LookupPath.INSTANCE.getHashFilter().contains("exname"));
+        assertTrue(LookupPath.INSTANCE.getHashFilter().contains("institution"));
         assertFalse(LookupPath.INSTANCE.getHashFilter().contains("rotation"));
     }
 }

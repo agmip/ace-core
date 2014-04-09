@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.agmip.ace.util.AceFunctions;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * A container class that holds the complete set of {@link AceExperiment}s,
  * {@link AceSoil}s and {@link AceWeather}s and handles the mapping
  * between these components.
  */
 public class AceDataset {
+    private static final Logger LOG = LoggerFactory.getLogger(AceDataset.class);
     private Map<String, AceWeather> weatherMap;
     private Map<String, AceSoil> soilMap;
     private Map<String, AceExperiment> experimentMap;
@@ -76,8 +80,13 @@ public class AceDataset {
     public void addWeather(byte[] source) throws IOException {
         AceWeather weather = new AceWeather(source);
         String wstId = weather.getValue("wst_id");
-        this.weatherMap.put(weather.getId(), weather);
-        this.widMap.put(wstId, weather.getId());
+        String wid   = weather.getId();
+        if (this.weatherMap.containsKey(wid)) {
+            LOG.error("Duplicate data found for wst_id: {}", wstId);
+        } else {
+            this.weatherMap.put(wid, weather);
+        }
+        this.widMap.put(wstId, wid);
     }
 
     /**
@@ -91,8 +100,14 @@ public class AceDataset {
     public void addSoil(byte[] source) throws IOException {
         AceSoil soil = new AceSoil(source);
         String soilId = soil.getValue("soil_id");
-        this.soilMap.put(soil.getId(), soil);
-        this.sidMap.put(soilId, soil.getId());
+        String sid   = soil.getId();
+        if (this.soilMap.containsKey(sid)) {
+            String origSoilId = this.soilMap.get(sid).getValueOr("soil_id", "");
+            LOG.error("Duplicate data found for soil_id: {} matches {}", soilId, origSoilId);
+        } else {
+            this.soilMap.put(sid, soil);
+        }
+        this.sidMap.put(soilId, sid);
     }
 
     /**
@@ -106,7 +121,11 @@ public class AceDataset {
     public void addExperiment(byte[] source) throws IOException {
         AceExperiment experiment = new AceExperiment(source);
         String eid = experiment.getId();
-        this.experimentMap.put(eid, experiment);
+        if(this.experimentMap.containsKey("eid")) {
+            LOG.error("Duplicate data found for soil_id: {}", experiment.getValueOr("exname", ""));
+        } else {
+            this.experimentMap.put(eid, experiment);
+        }
         this.eidMap.put(experiment.getValueOr("exname", ""), eid);
     }
 
@@ -236,11 +255,15 @@ public class AceDataset {
         for(AceExperiment e : this.getExperiments()) {
             String wid = e.getValue("wid");
             String sid = e.getValue("sid");
+            String eid = e.getId();
+            String exn = e.getValueOr("exname", "UNKNOWN");
             if (wid != null) {
+                LOG.info("wid found - {}", wid);
                 AceWeather w = this.weatherMap.get(wid);
                 if (w != null) {
                     e.setWeather(w);
                 } else {
+                    LOG.error("Found blank weather for experiment: {}", eid);
                     e.setWeather(new AceWeather(AceFunctions.getBlankComponent()));
                 }
             } else {
@@ -249,16 +272,20 @@ public class AceDataset {
 
                 if (wstId != null && wid != null) {
                     e.setWeather(this.weatherMap.get(wid));
+                    e.update("wid", wid, true);
                 } else {
+                    LOG.error("Found blank weather for experiment: {}", eid);
                     e.setWeather(new AceWeather(AceFunctions.getBlankComponent()));
                 }
             }
 
             if (sid != null) {
+                LOG.info("sid found - {}", sid);
                 AceSoil s = this.soilMap.get(sid);
                 if (s != null) {
                     e.setSoil(s);
                 } else {
+                    LOG.error("Found blank soil for experiment: [{}] {}", exn, eid);
                     e.setSoil(new AceSoil(AceFunctions.getBlankComponent()));
                 }
             } else {
@@ -267,7 +294,9 @@ public class AceDataset {
 
                 if (soilId != null && sid != null) {
                     e.setSoil(this.soilMap.get(sid));
+                    e.update("sid", sid, true);
                 } else {
+                    LOG.error("Found blank soil for experiment: [{}] {}", exn, eid);
                     e.setSoil(new AceSoil(AceFunctions.getBlankComponent()));
                 }
             }
