@@ -1,24 +1,24 @@
 !code_display,Indexed,Required,Priority,Export,Description,unit,Label,Notes
+CRID,I,,7,E,Crop (or weed) species identifier,code,Crop,Display as CRID_text
 SUITEID,I,S,,E,Suite identifiers,,Dataset Names,Grouping for experiments or sites
 EXNAME,,,,E,Name of experiment,,,
-AGMIP_RATING,I,S,,E,"AgMIP sentinel site rating (gold, silver, etc.)",code,AgMIP Rating,"User enters a suggested rating, may be modified by rater. Do not display or use for search unless ""officially"" rated."
-DATA_SOURCE,I,,,E,"Original format of  data (DSSAT, APSIM, CIMMYT, field log, etc)",code,,
-INSTITUTION,,S,,N,Names of participating institutions,,Institution,"No standardization, so searching may be difficult"
-CRID,I,R,7,E,Crop (or weed) species identifier,code,Crop,Display as CRID_text
-FL_LAT,I,R,,E,Field latitude,degree angle,Field Latitude,
-FL_LONG,I,R,,E,"Field longitude, E positive,W negative",degree angle,Field Longitude,
+INSTITUTION,,S,,N,Names of participating institutions,,,"No standardization, so searching may be difficult"
+FL_LOC_1,I,S,,N,Name of country where field is located,,Field Country,Eventually will generate from lat-long
+PDATE,I,S,,N,Planting or sowing date,date,Planting Date,Search on range
+HDATE,,,,N,"Growth stage date, harvest",date,,
+CUL_NAME,,,,N,Cultivar name,,,"No standardization, so searching may be difficult (e.g., ""McCurdy 84aa"", ""Mccurdy 84aa"", ""McCurdy"" are all different)"
 MAIN_FACTOR,I,S,,E,"Main factor, factors or interactions of interest in an experiment",code,Main Factor,"No standardization, so searching may be difficult"
 FACTORS,I,,,N,Experimental factor combinations,code,,
-CUL_NAME,,,,N,Cultivar name,,,"No standardization, so searching may be difficult (e.g., ""McCurdy 84aa"", ""Mccurdy 84aa"", ""McCurdy"" are all different)"
 FERTILIZER,I,,,N,Indicates whether or not fertilizer was applied (Y or N),code,,Can be calculated from other inputs
 IRRIG,I,,,N,Indicates whether or not the field was irrigated,code,,Can be calculated from other inputs
 LOCAL_NAME,,,,N,Locally used name for experiment,,,
-FL_LOC_1,I,S,,N,Name of country where field is located,,Field Country,Eventually will generate from lat-long
+AGMIP_RATING,I,S,,E,"AgMIP sentinel site rating (gold, silver, etc.)",code,AgMIP Rating,"User enters a suggested rating, may be modified by rater. Do not display or use for search unless ""officially"" rated."
+DATA_SOURCE,I,,,E,"Original format of  data (DSSAT, APSIM, CIMMYT, field log, etc)",code,,
+FL_LAT,I,R,,E,Field latitude,degree angle,Field Latitude,
+FL_LONG,I,R,,E,"Field longitude, E positive,W negative",degree angle,Field Longitude,
 FL_LOC_2,I,,6,N,"First political subdivision for field location (e.g., state, province, department)",,,Eventually will generate from lat-long
 FL_LOC_3,I,,2,N,"Second political subdivision for field location (e.g, county)",,,Eventually will generate from lat-long
 FLELE,I,,,N,Elevation of field site,m,,
-PDATE,I,S,,N,Planting or sowing date,date,Planting Date,Search on range
-HDATE,,,,N,"Growth stage date, harvest",date,,
 HWAM,,,,N,Harvest yield at harvest maturity (dry wt),kg/ha,,"HWAH alias, do not display or use for search if data are protected."
 SOIL_ID,I,S,,E,Soil profile identifier,,Soil ID,
 SOIL_NAME,,,,E,Name of soil profile,,,"No standardization, so searching may be difficult"
