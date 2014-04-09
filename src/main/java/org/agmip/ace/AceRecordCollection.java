@@ -67,6 +67,23 @@ public class AceRecordCollection extends AbstractCollection<AceRecord> {
         return true;
     }
 
+    public AceRecord getByIndex(int index) throws Exception {
+      if(index < 0 || index >= this.size())
+        throw new IndexOutOfBoundsException();
+
+      int i=0;
+      Iterator<AceRecord> iter = this.iterator();
+      while(iter.hasNext()) {
+        if(index == i) {
+          return iter.next();
+        } else {
+          i++;
+          iter.next();
+        }
+      }
+      return null;
+    }
+
     private int countRecords() throws IOException {
         JsonParser p = JsonFactoryImpl.INSTANCE.getParser(collection);
         JsonToken t = p.nextToken();

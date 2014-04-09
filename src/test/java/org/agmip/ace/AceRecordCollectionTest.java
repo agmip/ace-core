@@ -61,6 +61,17 @@ public class AceRecordCollectionTest {
     }
 
     @Test
+    public void testCollectionGetByIndex() throws Exception {
+      AceDataset set = loadTestFile();
+      log.debug("=== Start getByIndex() test ===");
+      for(AceWeather wth : set.getWeathers()) {
+        AceRecord r = wth.getDailyWeather().getByIndex(2);
+        log.debug("Found: {}", r.getValueOr("w_date", "00000000"));
+      }
+      log.debug("=== END TEST ===");
+    }
+
+    @Test
     public void testRecordYears() throws IOException {
         AceDataset set = loadTestFile();
         List<String> testYears = new ArrayList<String>();
