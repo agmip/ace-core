@@ -68,9 +68,6 @@ public class AceFunctions {
         AceComponent c = new AceComponent(source);
         for(String key : ordering) {
             String combined = key+c.getValue(key);
-            if(key.equals("soil_id")) {
-                LOG.debug("SOIL_ID HASH: {}", combined);
-            }
             hasher.putBytes(combined.getBytes("UTF-8"));
         }
         return hasher.hash();
@@ -147,6 +144,9 @@ public class AceFunctions {
 
     public static String deepGetValue(AceExperiment exp, String var) {
         AceComponent haystack = navigateToComponent(exp, var);
+        if(var.equals("wid") || var.equals("sid")) {
+            haystack = exp; // Pull it from the primary Experiment
+        }
         if (haystack == null) {
             // Shouldn't happen, but log this
             LOG.error("Invalid haystack provided to deepGetValue() while looking for {}", var);
@@ -207,7 +207,7 @@ public class AceFunctions {
                     haystack = exp;
                 }
             }
-            LOG.debug("Haystack found: {}", haystack);
+            //LOG.debug("Haystack found: {}", haystack);
             return haystack;
         } catch (IOException ex) {
             // Need to log the error here.
