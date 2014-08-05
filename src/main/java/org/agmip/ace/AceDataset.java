@@ -271,7 +271,12 @@ public class AceDataset {
                 wid = this.widMap.get(wstId);
 
                 if (wstId != null && wid != null) {
-                    e.setWeather(this.weatherMap.get(wid));
+                    AceWeather w = this.weatherMap.get(wid);
+                    e.setWeather(w);
+                    String wstId2 = w.getValue("wst_id");
+                    if (wstId2 != null && !wstId2.equals(wstId)) {
+                        e.update("wst_id", wstId2, true, true, false);
+                    }
                     e.update("wid", wid, true);
                 } else {
                     LOG.error("Found blank weather for experiment: {}", eid);
@@ -293,7 +298,12 @@ public class AceDataset {
                 sid = this.sidMap.get(soilId);
 
                 if (soilId != null && sid != null) {
-                    e.setSoil(this.soilMap.get(sid));
+                    AceSoil s = this.soilMap.get(sid);
+                    e.setSoil(s);
+                    String soilId2 = s.getValue("soil_id");
+                    if (soilId2 != null && !soilId2.equals(soilId)) {
+                        e.update("soil_id", soilId2, true, true, false);
+                    }
                     e.update("sid", sid, true);
                 } else {
                     LOG.error("Found blank soil for experiment: [{}] {}", exn, eid);
