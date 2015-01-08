@@ -17,4 +17,10 @@ public class LookupCodesTest {
 
         assertEquals("Invalid lookup results", test, LookupCodes.lookupCode("CRID", "AL", "cn", "DSSAT"));
     }
+
+    @Test
+    public void displayModelKeys() {
+	LookupCodesSingleton.INSTANCE.listModelKeys();
+	assertEquals("HAHA", true, true);
+    }
 }
