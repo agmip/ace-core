@@ -1,3 +1,0 @@
-** DONE Fix model lookup code (Not returning correct results)
-** DONE Figure out metadata parsing issues
-** TODO Clean up extreneous logs
