@@ -193,7 +193,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-pathfinder</id>
+            <id>download-pathfinder-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -205,7 +205,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-obs-pathfinder</id>
+            <id>download-obs-pathfinder-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -217,7 +217,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-management-codes</id>
+            <id>download-management-codes-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -229,7 +229,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-crop-codes</id>
+            <id>download-crop-codes-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -241,7 +241,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-metadata-codes</id>
+            <id>download-metadata-codes-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -253,7 +253,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-other-codes</id>
+            <id>download-other-codes-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
@@ -265,7 +265,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>download-metadata-filter</id>
+            <id>download-metadata-filter-compiled</id>
             <phase>process-resources</phase>
             <goals>
               <goal>wget</goal>
