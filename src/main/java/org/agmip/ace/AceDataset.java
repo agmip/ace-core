@@ -44,31 +44,31 @@ public class AceDataset {
     public void setMajorVersion(byte major) {
         this.majorVersion = major;
     }
-    
+
     public void setMinorVersion(byte minor) {
         this.minorVersion = minor;
     }
-    
+
     public void setRevision(byte revision) {
         this.revision = revision;
     }
-    
+
     public byte getMajorVersion() {
         return this.majorVersion;
     }
-    
+
     public byte getMinorVersion() {
         return this.minorVersion;
     }
-    
+
     public byte getRevision() {
         return this.revision;
     }
-    
+
     public String getVersion() {
         return this.majorVersion+"."+this.minorVersion+"."+this.revision;
     }
-    
+
     /**
      * Add a Weather Station to the dataset.
      * <p>
@@ -122,7 +122,7 @@ public class AceDataset {
         AceExperiment experiment = new AceExperiment(source);
         String eid = experiment.getId();
         if(this.experimentMap.containsKey("eid")) {
-            LOG.error("Duplicate data found for soil_id: {}", experiment.getValueOr("exname", ""));
+            LOG.error("Duplicate data found for experiment: {}", experiment.getValueOr("exname", ""));
         } else {
             this.experimentMap.put(eid, experiment);
         }
@@ -131,13 +131,13 @@ public class AceDataset {
 
     /**
      * Return a list of all Weather Stations.
-     * 
+     *
      * @return a list of {@link AceWeather}
      */
      public List<AceWeather> getWeathers() {
         return new ArrayList<AceWeather>(this.weatherMap.values());
     }
-    
+
     /**
      * Return a list of all Weather Stations as {@link IAceBaseComponent}s.
      *
@@ -146,7 +146,7 @@ public class AceDataset {
     public List<IAceBaseComponent> getWeatherComponents() {
         return new ArrayList<IAceBaseComponent>(this.weatherMap.values());
     }
-    
+
 
     /**
      * Return the original Weather Station mapping.
@@ -169,7 +169,7 @@ public class AceDataset {
     public List<AceSoil> getSoils() {
         return new ArrayList<AceSoil>(this.soilMap.values());
     }
-    
+
     /**
      * Return a list of all Soil Profiles as {@link IAceBaseComponent}s.
      *
@@ -191,7 +191,7 @@ public class AceDataset {
     public Map<String, AceSoil> getSoilMap() {
         return this.soilMap;
     }
-    
+
     /**
      * Return a list of all Experiments.
      *
@@ -200,7 +200,7 @@ public class AceDataset {
     public List<AceExperiment> getExperiments() {
         return new ArrayList<AceExperiment>(this.experimentMap.values());
     }
-    
+
     /**
      * Return a list of all Experiments as {@link IAceBaseComponent}s.
      *
@@ -209,7 +209,7 @@ public class AceDataset {
     public List<IAceBaseComponent> getExperimentComponents() {
         return new ArrayList<IAceBaseComponent>(this.experimentMap.values());
     }
-    
+
     /**
      * Return the original Experiment map.
      * <p>
@@ -222,7 +222,7 @@ public class AceDataset {
     public Map<String, AceExperiment> getExperimentMap() {
         return this.experimentMap;
     }
-    
+
     /**
      * Return a Experiment by given experiment name.
      *

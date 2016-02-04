@@ -53,6 +53,7 @@ public class AceComponent {
 	 * Return the raw {@code byte[]} for this component.
 	 *
 	 * @return raw {@code byte} for this component.
+	 * @throws IOException
 	 */
 	public byte[] getRawComponent() throws IOException {
 		return this.component;
@@ -72,6 +73,7 @@ public class AceComponent {
 	 * Provides a {@link JsonParser} for this component.
 	 *
 	 * @return a JsonParser for this component.
+	 * @throws IOException
 	 */
 	public JsonParser getParser() throws IOException {
 		return JsonFactoryImpl.INSTANCE.getParser(this.component);
@@ -84,6 +86,7 @@ public class AceComponent {
 	 * anonymous {@link ByteArrayOutputStream}.
 	 *
 	 * @return a JsonGenerator
+	 * @throws IOException
 	 */
 	public JsonGenerator getGenerator() throws IOException {
 		return JsonFactoryImpl.INSTANCE
@@ -94,8 +97,12 @@ public class AceComponent {
 	 * Provides a new {@link JsonGenerator} for the given {@link OutputStream}.
 	 *
 	 * This method creates a new JsonGenerator link to a user
-	 * provided OutpuStream. The user must {@code close()} the 
+	 * provided OutputStream. The user must {@code close()} the
 	 * OutputStream.
+	 *
+	 * @param stream user provided OutputStream
+	 * @return a JsonGenerator
+	 * @throws IOException
 	 */
 	public JsonGenerator getGenerator(OutputStream stream) throws IOException {
 		return JsonFactoryImpl.INSTANCE.getGenerator(stream);
@@ -113,6 +120,7 @@ public class AceComponent {
 	 * @param key Key to look up in the component.
 	 * @param alternateValue default value is key is not found in component.
 	 * @return a String value for this component.
+	 * @throws IOException
 	 */
 	public String getValueOr(String key, String alternateValue)
 			throws IOException {
@@ -135,6 +143,7 @@ public class AceComponent {
 	 *
 	 * @param key key to lookup in the component.
 	 * @return a String value for this component.
+	 * @throws IOException
 	 */
 	public String getValue(String key) throws IOException {
 		JsonParser p = this.getParser();
@@ -199,6 +208,7 @@ public class AceComponent {
 	 *
 	 * @param key key for the JSON array for this component.
 	 * @return {@code byte[]} for JSON array or a blank series (@code {}).
+	 * @throws IOException JsonParser failed for an unknown reason
 	 */
 	public byte[] getRawRecords(String key) throws IOException {
 		JsonParser p = this.getParser();
