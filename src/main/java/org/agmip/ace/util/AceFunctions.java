@@ -202,7 +202,7 @@ public class AceFunctions {
                 } else if (path.contains("initial")) {
                     haystack = exp.getInitialConditions();
                 } else if (path.contains("observed")) {
-                    haystack = exp.getOberservedData();
+                    haystack = exp.getObservedData();
                 } else {
                     haystack = exp;
                 }
