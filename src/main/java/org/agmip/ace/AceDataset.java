@@ -80,13 +80,23 @@ public class AceDataset {
     public void addWeather(byte[] source) throws IOException {
         AceWeather weather = new AceWeather(source);
         String wstId = weather.getValue("wst_id");
+        String climId = weather.getValue("clim_id");
         String wid   = weather.getId();
         if (this.weatherMap.containsKey(wid)) {
             LOG.error("Duplicate data found for wst_id: {}", wstId);
         } else {
             this.weatherMap.put(wid, weather);
         }
-        this.widMap.put(wstId, wid);
+        if (climId == null) {
+            this.widMap.put(wstId, wid);
+        } else {
+            this.widMap.put(wstId + climId, wid);
+        }
+        // Add default data link for the case survey data do not provide climate ID
+        if (!widMap.containsKey(wstId) || (climId != null && climId.startsWith("0"))) {
+            this.widMap.put(wstId, wid);
+        }
+        
     }
 
     /**
@@ -268,7 +278,12 @@ public class AceDataset {
                 }
             } else {
                 String wstId = e.getValue("wst_id");
-                wid = this.widMap.get(wstId);
+                String climId = e.getValue("clim_id");
+                if (climId == null) {
+                    wid = this.widMap.get(wstId);
+                } else {
+                    wid = this.widMap.get(wstId + climId);
+                }
 
                 if (wstId != null && wid != null) {
                     AceWeather w = this.weatherMap.get(wid);
