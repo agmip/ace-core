@@ -22,7 +22,6 @@ soil_texture,SLTX,SALO,Sandy loam,SL
 soil_texture,SLTX,VFLOS,Very fine loamy sand,
 soil_texture,SLTX,VFSA,Very fine sand,
 soil_texture,SLTX,VFSAL,Very fine sandy loam,
-,,,,
 soil_drainage_class,DRAINAGE,ED,excessively drained,
 soil_drainage_class,DRAINAGE,SED,somewhat excessively drained,
 soil_drainage_class,DRAINAGE,WD,well drained,

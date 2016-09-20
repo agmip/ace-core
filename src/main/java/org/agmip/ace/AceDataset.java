@@ -96,7 +96,6 @@ public class AceDataset {
         if (!widMap.containsKey(wstId) || (climId != null && climId.startsWith("0"))) {
             this.widMap.put(wstId, wid);
         }
-        
     }
 
     /**
@@ -340,7 +339,7 @@ public class AceDataset {
      * Re-associates and regenerates all ID's based on the hash for each
      * container.
      */
-    public void fixAssociations() throws IOException {
+    public AceDataset fixAssociations() throws IOException {
         for (AceWeather w : this.getWeathers()) {
             w.getId(true);
         }
@@ -355,5 +354,7 @@ public class AceDataset {
             e.update("sid", sid, true);
             e.getId(true);
         }
+
+        return this;
     }
 }
