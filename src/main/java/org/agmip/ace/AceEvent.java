@@ -5,6 +5,10 @@ import java.io.IOException;
 public class AceEvent extends AceComponent implements Comparable<AceEvent> {
     private AceEventType eventType;
     private String eventDate;
+    
+    public AceEvent (String event, String date) throws IOException {
+        this(String.format("{\"event\"=\"%1$s\",\"date\"=\"%2$s\"}", event, date).getBytes("UTF-8"));
+    }
 
     public AceEvent(byte[] source) throws IOException {
         super(source);
@@ -17,12 +21,15 @@ public class AceEvent extends AceComponent implements Comparable<AceEvent> {
         return this.eventType;
     }
 
+    @Override
     public int compareTo(AceEvent otherEvent) {
         return this.eventDate.compareTo(otherEvent.eventDate);
     }
 
+    @Override
     public String toString() {
-        return this.eventDate+": "+this.eventType.toString();
+        return new String(this.component);
+        //return this.eventDate+": "+this.eventType.toString();
     }
 
     private void setEventType() throws IOException {
@@ -43,6 +50,8 @@ public class AceEvent extends AceComponent implements Comparable<AceEvent> {
             this.eventType = AceEventType.ACE_MULCH_ADD_EVENT;
         } else if (event.equals("mulch_remove")) {
             this.eventType = AceEventType.ACE_MULCH_REMOVE_EVENT;
+        } else if (event.equals("chemical")) {
+            this.eventType = AceEventType.ACE_CHEMICAL_EVENT;
         } else {
             this.eventType = AceEventType.ACE_INVALID_EVENT;
         }

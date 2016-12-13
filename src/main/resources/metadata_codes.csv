@@ -23,10 +23,14 @@ AGMIP_RATING,Silver,(pending),,2
 AGMIP_RATING,Copper,(pending),,2
 AGMIP_RATING,Aluminum,(pending),,2
 ,,,,
-DATA_SOURCE,,(pending),,2
-DATA_SOURCE,,(pending),,2
-DATA_SOURCE,,(pending),,2
-DATA_SOURCE,,(pending),,2
+DATA_SOURCE,DSSAT,(pending),,2
+DATA_SOURCE,APSIM,(pending),,2
+DATA_SOURCE,Monsanto,(pending),,2
+DATA_SOURCE,CGIAR,(pending),,2
+DATA_SOURCE,CIMMYT,(pending),,2
+DATA_SOURCE,CIAT,(pending),,2
+DATA_SOURCE,ICRISAT,(pending),,2
+DATA_SOURCE,CIP,(pending),,2
 ,,,,
 PP_ROLE,PR001,Principal investigator,,1
 PP_ROLE,PR002,Collaborator,,1
@@ -49,11 +53,11 @@ IN_ROLE,IL002,Supporting role,,1
 IN_ROLE,IL003,Source of economic or other support,,1
 IN_ROLE,IL004,Data organization or conversion,,1
 ,,,,
-"MAIN_FACTOR, FACTORS",FACE,Free Air Carbon Exchange,,
-"MAIN_FACTOR, FACTORS",fertilizer,fertilizer rate experiment,,
-"MAIN_FACTOR, FACTORS",irrigation,irrigation rate experiment,,
-"MAIN_FACTOR, FACTORS",location,site or location experiment,,
-"MAIN_FACTOR, FACTORS",other,other not described,,
-"MAIN_FACTOR, FACTORS",rotation,crop rotation,,
-"MAIN_FACTOR, FACTORS",varieties,variety trials,,
-"MAIN_FACTOR, FACTORS",yield_trials,yield trials,,
+"MAIN_FACTOR, FACTORS",FACE,Free Air Carbon Exchange,,2
+"MAIN_FACTOR, FACTORS",fertilizer,fertilizer rate experiment,,2
+"MAIN_FACTOR, FACTORS",irrigation,irrigation rate experiment,,2
+"MAIN_FACTOR, FACTORS",location,site or location experiment,,2
+"MAIN_FACTOR, FACTORS",other,other not described,,2
+"MAIN_FACTOR, FACTORS",rotation,crop rotation,,2
+"MAIN_FACTOR, FACTORS",varieties,variety trials,,2
+"MAIN_FACTOR, FACTORS",yield_trials,yield trials,,2

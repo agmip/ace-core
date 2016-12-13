@@ -23,6 +23,10 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
     private List<String> missingDates;
     private DateTimeFormatter agmipDateFormat = DateTimeFormat.forPattern("yyyyMMdd");
 
+    public AceWeather() throws IOException {
+        this(AceFunctions.getBlankComponent());
+    }
+
     public AceWeather(byte[] source) throws IOException {
         super(source);
         this.getDailyWeather();
@@ -86,6 +90,7 @@ public class AceWeather extends AceComponent implements IAceBaseComponent {
         g.flush();
         g.close();
         this.component = baseOut.toByteArray();
+        this.getId(true);
         baseOut = null;
     }
 

@@ -18,8 +18,8 @@ public class AceDatasetTest {
 
     @Before
     public void setup() throws IOException {
-        InputStream sourceMach = new GZIPInputStream(this.getClass().getResourceAsStream("/mach_baseline.json.gz"));
-        InputStream sourceHSC = new GZIPInputStream(this.getClass().getResourceAsStream("/hsc.json.gz"));
+        InputStream sourceMach = new GZIPInputStream(this.getClass().getResourceAsStream("/mach_baseline.aceb"));
+        InputStream sourceHSC = new GZIPInputStream(this.getClass().getResourceAsStream("/hsc.aceb"));
         setMach = AceParser.parse(sourceMach);
         setHSC  = AceParser.parse(sourceHSC);
         sourceMach.close();

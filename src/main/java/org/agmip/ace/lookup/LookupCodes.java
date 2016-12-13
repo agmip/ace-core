@@ -43,9 +43,12 @@ public class LookupCodes {
         } else {
             lookupString = variable+"_"+code;
         }
-
+	
         HashMap<String, String> entry = new HashMap<String, String>();
         entry = LookupCodesSingleton.INSTANCE.aceLookup(lookupString);
+
+	LOG.debug("Lookup string: {}", lookupString);
+	LOG.debug("Current key:   {}", key);
 
         if (entry.isEmpty()) {
             return origCode;

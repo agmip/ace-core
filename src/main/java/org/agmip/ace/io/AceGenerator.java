@@ -15,7 +15,7 @@ import org.agmip.ace.util.JsonFactoryImpl;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * This class is responsible for generating the JSON (or GZIPPED JSON) 
+ * This class is responsible for generating the JSON (or GZIPPED JSON)
  * {@link OutputStream} from an {@link AceDataset}.
  */
 public class AceGenerator {
@@ -70,7 +70,6 @@ public class AceGenerator {
      */
     public static void generate(OutputStream dest, AceDataset set,
             boolean closeStream) throws IOException {
-        set.fixAssociations();
         JsonGenerator g = JsonFactoryImpl.INSTANCE.getGenerator(dest);
         g.writeStartObject();
         g.writeArrayFieldStart("weathers");

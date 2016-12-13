@@ -14,14 +14,14 @@ public enum JsonFactoryImpl {
     public static final JsonFactory jsonFactory = new JsonFactory();
     
     public JsonParser getParser(byte[] source) throws IOException {
-        return jsonFactory.createJsonParser(source);
+        return jsonFactory.createParser(source);
     }
     
     public JsonParser getParser(InputStream source) throws IOException {
-        return jsonFactory.createJsonParser(source);
+        return jsonFactory.createParser(source);
     }
     
     public JsonGenerator getGenerator(OutputStream dest) throws IOException {
-        return jsonFactory.createJsonGenerator(dest);
+        return jsonFactory.createGenerator(dest);
     }
 }

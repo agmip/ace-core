@@ -13,6 +13,10 @@ import com.google.common.hash.HashCode;
 public class AceSoil extends AceComponent implements IAceBaseComponent {
     private String sid;
     private AceRecordCollection soilLayers = null;
+    
+    public AceSoil() throws IOException {
+        this(AceFunctions.getBlankComponent());
+    }
 
     public AceSoil(byte[] source) throws IOException {
         super(source);
@@ -77,6 +81,7 @@ public class AceSoil extends AceComponent implements IAceBaseComponent {
         g.flush();
         g.close();
         this.component = baseOut.toByteArray();
+        this.getId(true);
         baseOut = null;
     }
 

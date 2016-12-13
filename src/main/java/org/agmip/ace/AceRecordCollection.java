@@ -35,6 +35,54 @@ public class AceRecordCollection extends AbstractCollection<AceRecord> {
             throw new RuntimeException(ex);
         }
     }
+    
+    @Override
+    public boolean add(AceRecord e) {
+        try {
+            JsonParser p = JsonFactoryImpl.INSTANCE.getParser(collection);
+            JsonToken t = p.nextToken();
+            if (t != JsonToken.START_ARRAY) {
+                log.error("Not starting with START_ARRAY, is {}", (t == null ? "NULL" : t.asString()));
+                //DEBUG
+                log.debug("Value is: {}",new String(collection, "UTF-8"));
+                return false;
+            }
+            p.close();
+            StringBuilder sb = new StringBuilder(new String(collection));
+            if (sb.toString().equals("[]")) {
+                sb = new StringBuilder();
+                sb.append("[");
+            } else {
+                sb.deleteCharAt(sb.length() - 1);
+                sb.append(",");
+            }
+            sb.append(new String(e.getRawComponent()));
+            sb.append("]");
+            collection = sb.toString().getBytes("UTF-8");
+
+        } catch (IOException ex) {
+            log.error("Fail to insert record caused by: {}", ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public AceRecord getByIndex(int index) throws Exception {
+      if(index < 0 || index >= this.size())
+        throw new IndexOutOfBoundsException();
+
+      int i=0;
+      Iterator<AceRecord> iter = this.iterator();
+      while(iter.hasNext()) {
+        if(index == i) {
+          return iter.next();
+        } else {
+          i++;
+          iter.next();
+        }
+      }
+      return null;
+    }
 
     private int countRecords() throws IOException {
         JsonParser p = JsonFactoryImpl.INSTANCE.getParser(collection);

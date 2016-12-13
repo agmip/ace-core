@@ -40,10 +40,10 @@ public class AceFunctionsTest {
     @Test
     public void testHasherIgnoresFields() throws IOException {
         AceExperiment e = setHSC.getExperiments().get(0);
-        String originalName = e.getValue("exname");
+        String originalName = e.getValue("institution");
         String originalHash = AceFunctions.generateId(e.getRawComponent());
-        e.update("exname", "Changed");
-        String newName = e.getValue("exname");
+        e.update("institution", "Changed");
+        String newName = e.getValue("institution");
         String newHash = AceFunctions.generateId(e.getRawComponent());
         assertEquals(originalHash, newHash);
         assertNotEquals(originalName, newName);

@@ -25,12 +25,12 @@ public class GeoPoint {
         this.geohash = GeoPoint.calculateGeoHash(lat, lng);
     }
     
-    public GeoPoint(double lat, double lng) {
-        this.setLat(lat);
-        this.setLng(lng);
-        this.geohash = GeoPoint.calculateGeoHash(this.lat, this.lng);
-    }
-    
+//    public GeoPoint(double lat, double lng) {
+//        this.setLat(lat);
+//        this.setLng(lng);
+//        this.geohash = GeoPoint.calculateGeoHash(this.lat, this.lng);
+//    }
+//    
     public GeoPoint() {
         this.lat = null;
         this.lng = null;
@@ -57,13 +57,13 @@ public class GeoPoint {
         this.lng = lng;
     }
     
-    public void setLat(double lat) {
-        this.lat = AceFormats.INSTANCE.getCoordinateFormat().format(lat);
-    }
-    
-    public void setLng(double lng) {
-        this.lng = AceFormats.INSTANCE.getCoordinateFormat().format(lng);
-    }
+//    public void setLat(double lat) {
+//        this.lat = AceFormats.INSTANCE.getCoordinateFormat().format(lat);
+//    }
+//    
+//    public void setLng(double lng) {
+//        this.lng = AceFormats.INSTANCE.getCoordinateFormat().format(lng);
+//    }
     
     public String getGeoHash() {
         return this.geohash;

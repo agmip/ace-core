@@ -10,13 +10,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.hash.HashCode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AceExperiment extends AceComponent implements IAceBaseComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(AceExperiment.class);
     private String eid;
     private AceWeather weather;
     private AceSoil    soil;
     private AceInitialConditions ic;
     private AceObservedData observed;
     private AceEventCollection events;
+
+    public AceExperiment() throws IOException {
+        this(AceFunctions.getBlankComponent());
+    }
 
     public AceExperiment(byte[] source) throws IOException {
         super(source);
@@ -38,6 +46,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
 
     public boolean validId() throws IOException {
         if (this.eid == null) return false;
+        String newId = this.generateId();
         return this.eid.equals(this.generateId());
     }
 
@@ -87,7 +96,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         return this.ic;
     }
 
-    public AceObservedData getOberservedData() {
+    public AceObservedData getObservedData() {
         return this.observed;
     }
 
@@ -102,10 +111,16 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         JsonToken t;
 
         t = p.nextToken();
+        int level = 0;
         boolean inManagement = false;
         while (t != null) {
+            if (t == JsonToken.START_OBJECT) {
+                level++;
+            } else if (t == JsonToken.END_OBJECT) {
+                level--;
+            }
             String currentName = p.getCurrentName();
-            if (currentName != null && t == JsonToken.FIELD_NAME && currentName.equals("management")) {
+            if (currentName != null && t == JsonToken.FIELD_NAME && currentName.equals("management") && level == 1) {
                 inManagement = true;
             }
             if(currentName != null && t == JsonToken.FIELD_NAME &&
@@ -149,6 +164,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         g.flush();
         g.close();
         this.component = baseOut.toByteArray();
+        this.getId(true);
     }
 
     public byte[] rebuildComponent() throws IOException {
@@ -156,8 +172,14 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         JsonParser p = this.getParser();
         JsonGenerator g = this.getGenerator(bos);
         JsonToken t = p.nextToken();
+        int level = 0;
         while ( t != null) {
-            if (t == JsonToken.END_OBJECT) {
+            if (t == JsonToken.START_OBJECT) {
+                level++;
+            } else if (t == JsonToken.END_OBJECT) {
+                level--;
+            }
+            if (t == JsonToken.END_OBJECT && level == 0) {
                 // Write the initial conditions
                 g.writeFieldName("initial_conditions");
                 JsonParser subP = this.getInitialConditions().getParser();
@@ -184,13 +206,13 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
                 g.writeEndObject();
                 // Write the observed
                 g.writeFieldName("observed");
-                subP = this.getOberservedData().getParser();
+                subP = this.getObservedData().getParser();
                 subT = subP.nextToken();
 
                 while (subT != null) {
                     if (subT == JsonToken.END_OBJECT) {
                         g.writeArrayFieldStart("timeSeries");
-                        for (AceRecord r: this.getOberservedData().getTimeseries()) {
+                        for (AceRecord r: this.getObservedData().getTimeseries()) {
                             g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
                         }
                         g.writeEndArray();

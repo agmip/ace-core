@@ -2,6 +2,7 @@ package org.agmip.ace.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,9 +20,13 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.google.common.hash.Hasher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AceFunctions {
     private static final HashFunction hf = Hashing.sha256();
+    private static final Logger LOG = LoggerFactory.getLogger(AceFunctions.class);
     // DO NOT INSTATIATE THIS CLASS
     private AceFunctions() {
     }
@@ -46,23 +51,26 @@ public class AceFunctions {
     }
 
     public static HashCode generateHCId(byte[] source) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        JsonParser    p = JsonFactoryImpl.INSTANCE.getParser(source);
-        JsonGenerator g = JsonFactoryImpl.INSTANCE.getGenerator(out);
-        JsonToken     t = p.nextToken();
-
+        JsonParser    p        = JsonFactoryImpl.INSTANCE.getParser(source);
+        JsonToken     t        = p.nextToken();
+        List<String>  ordering = new ArrayList<>();
+	
         while (t != null) {
             String currentName = p.getCurrentName();
-            if (currentName == null ||
-                    (! currentName.startsWith("~") && ! currentName.endsWith("~") && Collections.binarySearch(LookupPath.INSTANCE.getHashFilter(), currentName) < 0)) {
-                g.copyCurrentEvent(p);
-                    }
+            if (t == JsonToken.VALUE_STRING && currentName != null && (! currentName.startsWith("~") && ! currentName.endsWith("~") && Collections.binarySearch(LookupPath.INSTANCE.getHashFilter(), currentName) < 0)) {
+                ordering.add(currentName);
+            }
             t = p.nextToken();
         }
         p.close();
-        g.flush();
-        g.close();
-        return hf.newHasher().putBytes(out.toByteArray()).hash();
+        Collections.sort(ordering);
+        Hasher hasher = hf.newHasher();
+        AceComponent c = new AceComponent(source);
+        for(String key : ordering) {
+            String combined = key+c.getValue(key);
+            hasher.putBytes(combined.getBytes("UTF-8"));
+        }
+        return hasher.hash();
     }
 
     public static byte[] removeKeys(IAceBaseComponent source, List<String> keysToRemove) throws IOException {
@@ -92,6 +100,9 @@ public class AceFunctions {
 
     public static AceComponentType getComponentTypeFromKey(String key) {
         String path = LookupPath.INSTANCE.getPath(key);
+        if (path == null) {
+        	return AceComponentType.ACE_EXPERIMENT;
+        }
         if (path.contains("@")) {
             if (path.contains("events")) {
                 return AceComponentType.ACE_EVENT;
@@ -111,6 +122,9 @@ public class AceFunctions {
 
     public static AceComponentType getBaseComponentTypeFromKey(String key) {
         String path = LookupPath.INSTANCE.getPath(key);
+        if (path == null) {
+        	return AceComponentType.ACE_EXPERIMENT;
+        }
         if (path.contains("weather")) {
             return AceComponentType.ACE_WEATHER;
         } else if (path.contains("soil")) {
@@ -130,8 +144,12 @@ public class AceFunctions {
 
     public static String deepGetValue(AceExperiment exp, String var) {
         AceComponent haystack = navigateToComponent(exp, var);
+        if(var.equals("wid") || var.equals("sid")) {
+            haystack = exp; // Pull it from the primary Experiment
+        }
         if (haystack == null) {
             // Shouldn't happen, but log this
+            LOG.error("Invalid haystack provided to deepGetValue() while looking for {}", var);
             return null;
         } else {
             if (haystack.componentType == AceComponentType.ACE_EVENT && LookupPath.INSTANCE.isDate(var)) {
@@ -184,11 +202,12 @@ public class AceFunctions {
                 } else if (path.contains("initial")) {
                     haystack = exp.getInitialConditions();
                 } else if (path.contains("observed")) {
-                    haystack = exp.getOberservedData();
+                    haystack = exp.getObservedData();
                 } else {
                     haystack = exp;
                 }
             }
+            //LOG.debug("Haystack found: {}", haystack);
             return haystack;
         } catch (IOException ex) {
             // Need to log the error here.

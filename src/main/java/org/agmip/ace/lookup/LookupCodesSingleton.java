@@ -5,11 +5,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 
 
 public enum LookupCodesSingleton {
@@ -46,7 +47,7 @@ public enum LookupCodesSingleton {
 
                 for (int i=0; i < l; i++){
                     String currentCol = columnNames[i].toLowerCase();
-                    LOG.debug("currentCol: {}", currentCol);
+                    //LOG.debug("currentCol: {}", currentCol);
                     if (currentCol.equals("code_display")) {
                         columnIndex.add("variable");
                     } else if (currentCol.equals("code")) {
@@ -57,12 +58,12 @@ public enum LookupCodesSingleton {
                         columnIndex.add("cn");
                     } else if (currentCol.startsWith("latin")) {
                         columnIndex.add("ln");
-                    } else if (currentCol.endsWith("_code")) {
+                    } else if (currentCol.endsWith("_code") || currentCol.endsWith(" code")) {
                         if (currentCol.equals("crop_code")) {
                             columnIndex.add("code");
                         } else {
                             columnIndex.add("model");
-                            String[] tmp = currentCol.split("[_]");
+                            String[] tmp = currentCol.split("[_ ]");
                             modelIndex.add(tmp[0]);
                         }
                     } else {
@@ -75,7 +76,7 @@ public enum LookupCodesSingleton {
                     reader.close();
                     return;
                 }
-
+		
                 while ((line = reader.readNext()) != null) {
                     HashMap<String, String> entries = new HashMap<String, String>();
                     ArrayList<String> currentVars = new ArrayList<String>();
@@ -109,7 +110,7 @@ public enum LookupCodesSingleton {
                         for (String currentVar : currentVars) {
                             currentVar += "_";
                             currentVar += currentCode;
-                            LOG.debug("Current Code: {}", currentVar);                        
+                            // LOG.debug("Current Code: {}", currentVar);                        
                             aceLookupMap.put(currentVar, entries);
                         }
                     }
@@ -119,6 +120,7 @@ public enum LookupCodesSingleton {
                         for (String currentVar : currentVars) {
                             for (String model : modelIndex) {
                                 String modelVar = model+"_"+currentVar+"_"+entries.get(model);
+				//LOG.debug("Giving {} value {}", modelVar, currentCode);
                                 modelLookupMap.put(modelVar, currentCode);
                             }
                         }
@@ -141,6 +143,13 @@ public enum LookupCodesSingleton {
         } else {
             return "";
         }
+    }
+
+    public void listModelKeys() {
+	LOG.debug("DISPLAYING MODEL KEYS");
+	for(String key : modelLookupMap.keySet()) {
+	    LOG.debug(key);
+	}
     }
 
     public HashMap<String, String> aceLookup(String key) {

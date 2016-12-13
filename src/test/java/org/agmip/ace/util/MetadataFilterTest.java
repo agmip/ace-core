@@ -10,7 +10,7 @@ import org.junit.Test;
 public class MetadataFilterTest {
     @Before
     public void setup() {
-        MetadataFilter.INSTANCE.initialize();
+        //MetadataFilter.INSTANCE.initialize();
     }
     
     @Test
