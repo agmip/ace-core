@@ -627,6 +627,7 @@ minimum_temperature,19,TMIN,4,TMIN,6,,"Temperature of air, minimum",C,single,,WE
 rain_snow_fall,14,RAIN,4,RAIN,7,,"Rainfall, including moisture in snow, in one day",mm/d,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,.,,0,,,1,,2,2,
 wind_speed_daily,16,WIND,4,WIND,8,,"Wind speed, daily",km/d,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,WIND SPEED km/d,WDSD,0,,,1,,1,1,
 temperature_dewpoint,20,TDEW,4,TDEW,9,,"Temperature, dewpoint",C,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,DEWPOINT °C,"TDWD, DEWP",,,,1,,1,1,
+ozone_daily_max,15,OZONX,5,OZONX,9,,Daily maximum ozone concentration,ppb,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,chp 2016-10-18,,,,,,1,,1,1,
 CO2_conc_atmosphere_daily,25,CO2D,4,CO2D,10,,"CO2 concentration, atmospheric average over day",vpm,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,CO2 vpm,CO2,,,,1,,0,,
 cloudiness_factor,17,CLDD,4,CLDD,11,,"Cloudiness factor, relative",number,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,CLOUD FRAC,.,,,D,1,,0,,
 PAR_photon_flux_density,23,PARD,4,PARD,13,,PAR or photon flux density,mole/m2.d,single,,WEATHER,WEATHER_STATION,WEATHER_DAILY,,5052,1,,PAR,PAR,,,,1,,0,,
