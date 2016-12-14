@@ -76,6 +76,7 @@ public class AceDataset {
      * for that weather station data.
      *
      * @param source JSON weather station data
+     * @throws IOException if there is an I/O error
      */
     public void addWeather(byte[] source) throws IOException {
         AceWeather weather = new AceWeather(source);
@@ -96,7 +97,6 @@ public class AceDataset {
         if (!widMap.containsKey(wstId) || (climId != null && climId.startsWith("0"))) {
             this.widMap.put(wstId, wid);
         }
-        
     }
 
     /**
@@ -106,6 +106,7 @@ public class AceDataset {
      * for that soil data.
      *
      * @param source JSON soil data
+     * @throws IOException if there is an I/O error
      */
     public void addSoil(byte[] source) throws IOException {
         AceSoil soil = new AceSoil(source);
@@ -127,6 +128,7 @@ public class AceDataset {
      * for that experiment data.
      *
      * @param source JSON experiment data
+     * @throws IOException if there is an I/O error
      */
     public void addExperiment(byte[] source) throws IOException {
         AceExperiment experiment = new AceExperiment(source);
@@ -260,6 +262,7 @@ public class AceDataset {
      * or {@code sid} of the experiment, falling back on the {@code wst_id}
      * or {@code soil_id}. If no association is found,
      * {@link AceFunctions#getBlankComponent} is called.
+     * @throws IOException if there is an I/O error
      */
     public void linkDataset() throws IOException {
         for(AceExperiment e : this.getExperiments()) {
@@ -339,8 +342,10 @@ public class AceDataset {
      * <p>
      * Re-associates and regenerates all ID's based on the hash for each
      * container.
+     * @return the current dataset
+     * @throws IOException if there is an I/O error
      */
-    public void fixAssociations() throws IOException {
+    public AceDataset fixAssociations() throws IOException {
         for (AceWeather w : this.getWeathers()) {
             w.getId(true);
         }
@@ -355,5 +360,7 @@ public class AceDataset {
             e.update("sid", sid, true);
             e.getId(true);
         }
+
+        return this;
     }
 }
