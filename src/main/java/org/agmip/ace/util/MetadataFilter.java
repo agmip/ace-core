@@ -34,10 +34,10 @@ public enum MetadataFilter {
         loadFromEmbeddedCSV(filter);
     }
 
-    /**public void initialize() {
+    /*public void initialize() {
         InputStream filter = getClass().getClassLoader().getResourceAsStream("metadata_filter.csv");
         loadFromEmbeddedCSV(filter);
-    }**/
+    }*/
 
     public Set<String> getMetadata() {
         return metadata;
