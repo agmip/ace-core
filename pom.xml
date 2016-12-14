@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.agmip.ace</groupId>
   <artifactId>ace-core</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
   <name>AgMIP Crop Experiment Library - Core Components</name>
   <url>http://www.agmip.org/</url>
 
   <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <groupId>org.agmip.parent</groupId>
+    <artifactId>agmip-lib-parent</artifactId>
+    <version>2.0.1</version>
   </parent>
 
   <issueManagement>
@@ -32,57 +32,35 @@
     <tag>HEAD</tag>
   </scm>
 
-  <developers>
-    <developer>
-      <email>cvillalobos@ufl.edu</email>
-      <name>Christopher Villalobos</name>
-      <url>https://github.com/frostbytten</url>
-      <id>frostbytten</id>
-    </developer>
-  </developers>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.10</version>
     </dependency>
-
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.2.2</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>14.0.1</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.opencsv</groupId>
+      <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
-      <version>2.3</version>
     </dependency>
     <dependency>
       <groupId>ch.hsr</groupId>
       <artifactId>geohash</artifactId>
-      <version>1.0.13</version>
     </dependency>
   </dependencies>
   <build>

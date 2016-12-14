@@ -96,7 +96,7 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
         return this.ic;
     }
 
-    public AceObservedData getOberservedData() {
+    public AceObservedData getObservedData() {
         return this.observed;
     }
 
@@ -206,13 +206,13 @@ public class AceExperiment extends AceComponent implements IAceBaseComponent {
                 g.writeEndObject();
                 // Write the observed
                 g.writeFieldName("observed");
-                subP = this.getOberservedData().getParser();
+                subP = this.getObservedData().getParser();
                 subT = subP.nextToken();
 
                 while (subT != null) {
                     if (subT == JsonToken.END_OBJECT) {
                         g.writeArrayFieldStart("timeSeries");
-                        for (AceRecord r: this.getOberservedData().getTimeseries()) {
+                        for (AceRecord r: this.getObservedData().getTimeseries()) {
                             g.writeRawValue(new String(r.getRawComponent(), "UTF-8"));
                         }
                         g.writeEndArray();

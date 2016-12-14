@@ -44,31 +44,31 @@ public class AceDataset {
     public void setMajorVersion(byte major) {
         this.majorVersion = major;
     }
-    
+
     public void setMinorVersion(byte minor) {
         this.minorVersion = minor;
     }
-    
+
     public void setRevision(byte revision) {
         this.revision = revision;
     }
-    
+
     public byte getMajorVersion() {
         return this.majorVersion;
     }
-    
+
     public byte getMinorVersion() {
         return this.minorVersion;
     }
-    
+
     public byte getRevision() {
         return this.revision;
     }
-    
+
     public String getVersion() {
         return this.majorVersion+"."+this.minorVersion+"."+this.revision;
     }
-    
+
     /**
      * Add a Weather Station to the dataset.
      * <p>
@@ -76,17 +76,27 @@ public class AceDataset {
      * for that weather station data.
      *
      * @param source JSON weather station data
+     * @throws IOException if there is an I/O error
      */
     public void addWeather(byte[] source) throws IOException {
         AceWeather weather = new AceWeather(source);
         String wstId = weather.getValue("wst_id");
+        String climId = weather.getValue("clim_id");
         String wid   = weather.getId();
         if (this.weatherMap.containsKey(wid)) {
             LOG.error("Duplicate data found for wst_id: {}", wstId);
         } else {
             this.weatherMap.put(wid, weather);
         }
-        this.widMap.put(wstId, wid);
+        if (climId == null) {
+            this.widMap.put(wstId, wid);
+        } else {
+            this.widMap.put(wstId + climId, wid);
+        }
+        // Add default data link for the case survey data do not provide climate ID
+        if (!widMap.containsKey(wstId) || (climId != null && climId.startsWith("0"))) {
+            this.widMap.put(wstId, wid);
+        }
     }
 
     /**
@@ -96,6 +106,7 @@ public class AceDataset {
      * for that soil data.
      *
      * @param source JSON soil data
+     * @throws IOException if there is an I/O error
      */
     public void addSoil(byte[] source) throws IOException {
         AceSoil soil = new AceSoil(source);
@@ -117,12 +128,13 @@ public class AceDataset {
      * for that experiment data.
      *
      * @param source JSON experiment data
+     * @throws IOException if there is an I/O error
      */
     public void addExperiment(byte[] source) throws IOException {
         AceExperiment experiment = new AceExperiment(source);
         String eid = experiment.getId();
         if(this.experimentMap.containsKey("eid")) {
-            LOG.error("Duplicate data found for soil_id: {}", experiment.getValueOr("exname", ""));
+            LOG.error("Duplicate data found for experiment: {}", experiment.getValueOr("exname", ""));
         } else {
             this.experimentMap.put(eid, experiment);
         }
@@ -131,13 +143,13 @@ public class AceDataset {
 
     /**
      * Return a list of all Weather Stations.
-     * 
+     *
      * @return a list of {@link AceWeather}
      */
      public List<AceWeather> getWeathers() {
         return new ArrayList<AceWeather>(this.weatherMap.values());
     }
-    
+
     /**
      * Return a list of all Weather Stations as {@link IAceBaseComponent}s.
      *
@@ -146,7 +158,7 @@ public class AceDataset {
     public List<IAceBaseComponent> getWeatherComponents() {
         return new ArrayList<IAceBaseComponent>(this.weatherMap.values());
     }
-    
+
 
     /**
      * Return the original Weather Station mapping.
@@ -169,7 +181,7 @@ public class AceDataset {
     public List<AceSoil> getSoils() {
         return new ArrayList<AceSoil>(this.soilMap.values());
     }
-    
+
     /**
      * Return a list of all Soil Profiles as {@link IAceBaseComponent}s.
      *
@@ -191,7 +203,7 @@ public class AceDataset {
     public Map<String, AceSoil> getSoilMap() {
         return this.soilMap;
     }
-    
+
     /**
      * Return a list of all Experiments.
      *
@@ -200,7 +212,7 @@ public class AceDataset {
     public List<AceExperiment> getExperiments() {
         return new ArrayList<AceExperiment>(this.experimentMap.values());
     }
-    
+
     /**
      * Return a list of all Experiments as {@link IAceBaseComponent}s.
      *
@@ -209,7 +221,7 @@ public class AceDataset {
     public List<IAceBaseComponent> getExperimentComponents() {
         return new ArrayList<IAceBaseComponent>(this.experimentMap.values());
     }
-    
+
     /**
      * Return the original Experiment map.
      * <p>
@@ -222,7 +234,7 @@ public class AceDataset {
     public Map<String, AceExperiment> getExperimentMap() {
         return this.experimentMap;
     }
-    
+
     /**
      * Return a Experiment by given experiment name.
      *
@@ -250,6 +262,7 @@ public class AceDataset {
      * or {@code sid} of the experiment, falling back on the {@code wst_id}
      * or {@code soil_id}. If no association is found,
      * {@link AceFunctions#getBlankComponent} is called.
+     * @throws IOException if there is an I/O error
      */
     public void linkDataset() throws IOException {
         for(AceExperiment e : this.getExperiments()) {
@@ -268,7 +281,12 @@ public class AceDataset {
                 }
             } else {
                 String wstId = e.getValue("wst_id");
-                wid = this.widMap.get(wstId);
+                String climId = e.getValue("clim_id");
+                if (climId == null) {
+                    wid = this.widMap.get(wstId);
+                } else {
+                    wid = this.widMap.get(wstId + climId);
+                }
 
                 if (wstId != null && wid != null) {
                     AceWeather w = this.weatherMap.get(wid);
@@ -324,8 +342,10 @@ public class AceDataset {
      * <p>
      * Re-associates and regenerates all ID's based on the hash for each
      * container.
+     * @return the current dataset
+     * @throws IOException if there is an I/O error
      */
-    public void fixAssociations() throws IOException {
+    public AceDataset fixAssociations() throws IOException {
         for (AceWeather w : this.getWeathers()) {
             w.getId(true);
         }
@@ -340,5 +360,7 @@ public class AceDataset {
             e.update("sid", sid, true);
             e.getId(true);
         }
+
+        return this;
     }
 }
