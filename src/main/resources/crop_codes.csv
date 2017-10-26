@@ -64,6 +64,7 @@ CRID,SBN,Soybean,Glycine max,Pulse,,SB,Soybean,Soybean
 CRID,SBT,Beet sugar,Beta vulgaris,Sugar,,BS,Beetsugar,
 CRID,SES,Sesame,Sesamum indicum,Oil seed,,SS,Sesame,
 CRID,SGG,Grain sorghum,Sorghum bicolor ,Cereal,,SG,Sorghum,Sorghum
+CRID,STB,Strawberry,,Fruit,,,,
 CRID,STR,Shrubs/trees,,,,ST,Tree,
 CRID,SUC,Sugarcane,Saccharum spp. ,Sugar,,SC,Sugar,
 CRID,SUN,Sunflower,Helianthus annuus ,Oil seed,,SU,Sunflower,
@@ -134,3 +135,4 @@ CRID,YAM,Yam,Dioscorea spp.,Root/tuber,,,,
 CRID,FML,Finger millet,Eleusine coracana,Cereal,,,,
 CRID,LAB,Lablab,Dolichus lablab,Pulse,,,,
 CRID,FRG,Forage (generic),,Forage,Unidentified forage crop,,,
+,,,Hesperaloe,"Fibre, bioenergy",,,,
