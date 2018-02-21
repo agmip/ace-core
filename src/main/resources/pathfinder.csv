@@ -583,7 +583,7 @@ source_daily_weather,20,WST_SOURCE,10,WST_SOURCE,10,,Source of daily weather dat
 weather_sta_start_date,22,WST_START_DATE,14,WST_START_DATE,10,,Start date of all weather records from station.,date,,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,,"2017-03-17, jww",,,,,,,,,,
 weather_sta_end_date,20,WST_END_DATE,12,WST_END_DATE,10,,End date of all weather records from station.,date,,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,,"2017-03-17, jww",,,,,,,,,,
 temperature_avg_year,20,TAV,3,TAV,11,,Temperature average for whole year,C,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,.,-10,40,,1,,2,2,
-temp_amplit_month_avg,21,TAMP,4,TAMP,12,,Temperature amplitude (peak to trough) of 12 monthly averages,C,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,.,,,,1,,2,2,
+temp_amplit_month_avg,21,TAMP,4,TAMP,12,,Temperature amplitude (peak to trough) of 12 monthly averages,C,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,TRNGE,,,,1,,2,2,
 temperature_sensor_ht,21,TEMHT,5,TEMHT,13,,Weather station temperature sensor height,m,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,.,0,,,1,,2,2,
 ref_height_windsp_meas,22,WNDHT,5,WNDHT,14,,Reference height for windspeed measurement,m,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,,0,,,1,,2,2,
 ref_height_weather_meas,23,REFHT,5,REFHT,15,,Reference height for weather measurement,m,single,,WEATHER,WEATHER_STATION,STATION_METADATA,,5041,1,,.,.,0,,,1,,2,2,

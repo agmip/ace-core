@@ -338,6 +338,7 @@ tops_(ie_canopy)_N,18,TNAD,4,TNAD,,,Tops (ie canopy) N,kg[N]/ha,single,,EXPERIME
 tuber_stem_leaf_N,17,TUNA,4,TUNA,,,Tuber+stem+leaf N,kg[N]/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,Total N kg/ha,.,0,,,1,-1,,,,
 tuber_N,7,UNAD,4,UNAD,,,Tuber N,kg[N]/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,Tuber N kg/ha,.,0,,,1,-1,,,,
 vegetative_N_content,20,VNAD,4,VNAD,,,Veg (stem+leaf) N,kg[N]/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,Vege N kg/ha,.,0,,,1,-1,,,,
+fruit_N_content,15,FRNAD,5,FRNAD,,,Fruit N,kg[N]/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,,.,0,,,1,-1,,,,
 chaff_N_content,15,CHNAD,5,CHNAD,,,Chaff N,kg/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,CHAFF N kg/ha,.,0,,,1,-1,,,,
 grain_N,7,GNAD,4,GNAD,,,Grain N,kg/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,GRAIN N kg/ha,.,0,,,1,-1,,,,
 leaf_N,6,LNAD,4,LNAD,,,Leaf N,kg/ha,single,,EXPERIMENT,MEASURED_DATA,TIME_SERIES,PLANT_NITROGEN,2512,1,,LEAF N kg/ha,.,0,,,1,-1,,,,
