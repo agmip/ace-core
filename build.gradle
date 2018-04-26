@@ -108,7 +108,7 @@ publishing {
             artifact javadocJar
             groupId group
             artifactId rootProject.name
-            version version
+            version project.version
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', 'The ace-core library provides the I/O mechanism for the AgMIP Crop Experiment (ACE) file format')
@@ -131,8 +131,8 @@ bintray {
         licenses = ['BSD-3-Clause']
         vcsUrl = 'https://github.com/agmip/ace-core.git'
         version {
-            name = version
-            vcsTag = version
+            name = project.version
+            vcsTag = project.version
         }
     }
 }
