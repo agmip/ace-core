@@ -1,0 +1,138 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'de.undercouch.download' version '3.4.2'
+    id 'com.jfrog.bintray' version '1.7.3'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+}
+
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+group 'org.agmip.ace'
+version '2.1.2-SNAPSHOT'
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+ext.moduleName = 'org.agmip.ace.core'
+
+dependencies {
+    implementation 'org.agmip.bom:agmip-bom-core:2.1.2-SNAPSHOT'
+
+    api 'com.fasterxml.jackson.core:jackson-core'
+  
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'joda-time:joda-time'
+    implementation 'com.google.guava:guava'
+    implementation 'com.opencsv:opencsv'
+    implementation 'ch.hsr:geohash'
+
+    testImplementation 'junit:junit'
+    testRuntime 'org.junit.vintage:junit-vintage-engine'
+}
+
+test {
+    useJUnitPlatform() {}
+}
+
+compileJava {
+    options.compilerArgs << '-Xlint:all'
+}
+
+javadoc {
+    options.addStringOption('-html5')
+}
+
+jar {
+    manifest {
+        attributes('Automatic-Module-Name': moduleName)
+    }
+}
+
+task wrapper(type: Wrapper) {
+    jarFile = '.gradlew/gradle-wrapper.jar'
+    gradleVersion = '4.7'
+}
+
+task downloadFile(type: Download) {
+    src([
+        'http://dev.agmip.org/mvl/crop_codes.csv',
+        'http://dev.agmip.org/mvl/management_codes.csv',
+        'http://dev.agmip.org/mvl/metadata_codes.csv',
+        'http://dev.agmip.org/mvl/metadata_filter.csv',
+        'http://dev.agmip.org/mvl/obs_pathfinder.csv',
+        'http://dev.agmip.org/mvl/other_codes.csv',
+        'http://dev.agmip.org/mvl/pathfinder.csv'
+        ])
+    dest "${projectDir}/src/main/resources"
+}
+
+task sourcesJar(type: Jar, dependsOn: 'classes') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: 'javadoc') {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+def mavenCentralReqs = {
+    licenses {
+        license {
+            name 'BSD 3-Clause'
+            url 'https://raw.github.com/agmip/ace-core/master/LICENSE'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'agmip-developers'
+            name 'AgMIP Developers'
+            email 'it@agmip.org'
+        }
+    }
+    scm {
+        url 'https://github.com/agmip/ace-core'
+    }
+}
+
+publishing {
+    publications {
+        AgMIPPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId group
+            artifactId rootProject.name
+            version version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'The ace-core library provides the I/O mechanism for the AgMIP Crop Experiment (ACE) file format')
+                root.appendNode('name', 'AgMIP Crop Experiment Library')
+                root.appendNode('url', 'https://agmip.org/')
+                root.children().last() + mavenCentralReqs
+            }
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('AGMIP_BINTRAY_USER')
+    key = System.getenv('AGMIP_BINTRAY_KEY')
+    publications = ['AgMIPPublication']
+    pkg {
+        repo = 'maven'
+        name = rootProject.name
+        userOrg = 'agmip'
+        licenses = ['BSD-3-Clause']
+        vcsUrl = 'https://github.com/agmip/ace-core.git'
+        version {
+            name = version
+            vcsTag = version
+        }
+    }
+}
