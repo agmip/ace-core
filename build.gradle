@@ -14,13 +14,13 @@ repositories {
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 group 'org.agmip.ace'
-version '2.1.3-SNAPSHOT'
+version '2.1.3'
 targetCompatibility = 1.8
 sourceCompatibility = 1.8
 ext.moduleName = 'org.agmip.ace.core'
 
 dependencies {
-    implementation 'org.agmip.bom:agmip-bom-core:2.1.2-SNAPSHOT'
+    implementation 'org.agmip.bom:agmip-bom-core:2.1.2'
 
     api 'com.fasterxml.jackson.core:jackson-core'
   
